@@ -1,11 +1,47 @@
+import Link from 'next/link';
 import Logo from '@/components/Logo';
 
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
 export default function Footer() {
-  const cols = [
-    { h: 'PRODUCT', items: ['Method', 'Pricing', 'Changelog', 'Status'] },
-    { h: 'COMPANY', items: ['About', 'Contact', 'Press'] },
-    { h: 'EDUCATION', items: ['What is SMA20/200?', 'Prior45 zones', "Trader's guide"] },
-    { h: 'LEGAL', items: ['Terms', 'Privacy', 'Disclaimer', 'Refunds'] },
+  const cols: { h: string; items: FooterLink[] }[] = [
+    {
+      h: 'PRODUCT',
+      items: [
+        { label: 'Method', href: '/#method' },
+        { label: 'Pricing', href: '/pricing' },
+        { label: 'Changelog', href: '#' },
+        { label: 'Status', href: '#' },
+      ],
+    },
+    {
+      h: 'COMPANY',
+      items: [
+        { label: 'About', href: '#' },
+        { label: 'Contact', href: 'mailto:hello@mrstocks.cash' },
+        { label: 'Press', href: '#' },
+      ],
+    },
+    {
+      h: 'EDUCATION',
+      items: [
+        { label: 'What is SMA20/200?', href: '#' },
+        { label: 'Prior45 zones', href: '#' },
+        { label: "Trader's guide", href: '#' },
+      ],
+    },
+    {
+      h: 'LEGAL',
+      items: [
+        { label: 'Terms', href: '/legal/terms' },
+        { label: 'Privacy', href: '/legal/privacy' },
+        { label: 'Disclaimer', href: '/legal/terms#disclaimers' },
+        { label: 'Refunds', href: '/legal/terms#refunds' },
+      ],
+    },
   ];
 
   return (
@@ -30,10 +66,13 @@ export default function Footer() {
               </span>
               <ul className="flex flex-col gap-1.5">
                 {c.items.map((it) => (
-                  <li key={it}>
-                    <a className="text-[11.5px] uppercase tracking-[0.06em] text-white/70 hover:text-white cursor-pointer">
-                      {it}
-                    </a>
+                  <li key={it.label}>
+                    <Link
+                      href={it.href}
+                      className="text-[11.5px] uppercase tracking-[0.06em] text-white/70 hover:text-white cursor-pointer"
+                    >
+                      {it.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

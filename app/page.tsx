@@ -6,11 +6,13 @@ import Pricing from '@/components/marketing/Pricing';
 import FAQ from '@/components/marketing/FAQ';
 import Footer from '@/components/marketing/Footer';
 import { env } from '@/lib/env';
+import { auth } from '@/lib/auth';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
   return (
     <main className="bg-black text-white min-h-screen">
-      <Nav />
+      <Nav isSignedIn={Boolean(session?.user)} />
       <Hero />
       <HowItWorks />
       <Features />

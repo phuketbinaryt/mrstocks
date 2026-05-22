@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import Logo from '@/components/Logo';
-import { signInWithEmail } from '../../signin/actions';
+import { signInWithEmail, signInWithWhop } from '../../signin/actions';
 
 export const metadata = {
   title: 'Sign in — MR/STOCKS',
@@ -57,9 +58,26 @@ export default function SignInPage() {
             Sign in.
           </h1>
           <p className="text-[13px] md:text-[14px] leading-relaxed text-white/65 mb-8 max-w-[44ch]">
-            Enter your account email. We&apos;ll send you a one-time link.
-            No password required. Link expires in 30 minutes.
+            Continue with your Whop subscription, or use a magic link
+            email. Both lead to the same account.
           </p>
+
+          <form action={signInWithWhop} className="mb-5">
+            <button
+              type="submit"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm border border-[oklch(0.82_0.16_75/0.6)] bg-[oklch(0.82_0.16_75/0.18)] text-[oklch(0.82_0.16_75)] text-[12px] uppercase tracking-[0.14em] hover:bg-[oklch(0.82_0.16_75/0.28)] cursor-pointer"
+            >
+              CONTINUE WITH WHOP <ArrowUpRight size={12} />
+            </button>
+          </form>
+
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[9.5px] uppercase tracking-[0.18em] text-white/45">
+              OR
+            </span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
 
           <form action={signInWithEmail} className="space-y-3">
             <label className="flex flex-col gap-1.5">
@@ -80,7 +98,7 @@ export default function SignInPage() {
 
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm border border-[oklch(0.82_0.16_75/0.6)] bg-[oklch(0.82_0.16_75/0.18)] text-[oklch(0.82_0.16_75)] text-[12px] uppercase tracking-[0.14em] hover:bg-[oklch(0.82_0.16_75/0.28)] cursor-pointer"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm border border-white/22 bg-[#0B0B0B] text-white text-[12px] uppercase tracking-[0.14em] hover:bg-white/[0.04] hover:border-white/30 cursor-pointer"
             >
               SEND MAGIC LINK →
             </button>
@@ -89,7 +107,7 @@ export default function SignInPage() {
           <div className="mt-8 pt-6 border-t border-white/10">
             <p className="text-[11px] uppercase tracking-[0.12em] text-white/45">
               NOT A MEMBER?{' '}
-              <Link href="/#pricing" className="text-[oklch(0.82_0.16_75)] hover:underline">
+              <Link href="/pricing" className="text-[oklch(0.82_0.16_75)] hover:underline">
                 SUBSCRIBE →
               </Link>
             </p>

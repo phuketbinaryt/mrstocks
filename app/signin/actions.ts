@@ -6,3 +6,7 @@ export async function signInWithEmail(formData: FormData) {
   if (!email) throw new Error('Email is required');
   await signIn('email', { email, redirectTo: '/dashboard' });
 }
+
+export async function signInWithWhop() {
+  await signIn('whop', { redirectTo: '/dashboard' });
+}

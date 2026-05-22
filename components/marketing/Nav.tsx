@@ -3,7 +3,13 @@ import { Menu } from 'lucide-react';
 import Logo from '@/components/Logo';
 import LivePill from './LivePill';
 
-export default function Nav() {
+export interface NavProps {
+  /** When true, show the MEMBERS link to /dashboard. Pages that know the
+   *  signed-in state (e.g. landing page after auth wiring) pass true. */
+  isSignedIn?: boolean;
+}
+
+export default function Nav({ isSignedIn = false }: NavProps) {
   return (
     <header className="sticky top-0 z-40 flex items-center gap-3 px-4 md:px-8 h-12 md:h-14 border-b border-white/12 bg-black/80 backdrop-blur">
       <Link href="/" className="flex items-center gap-2 shrink-0">
@@ -17,12 +23,20 @@ export default function Nav() {
         <a href="#method" className="hover:text-white cursor-pointer">
           METHOD
         </a>
-        <a href="#pricing" className="hover:text-white cursor-pointer">
+        <Link href="/pricing" className="hover:text-white cursor-pointer">
           PRICING
-        </a>
+        </Link>
         <a href="#faq" className="hover:text-white cursor-pointer">
           FAQ
         </a>
+        {isSignedIn && (
+          <Link
+            href="/dashboard"
+            className="text-[oklch(0.82_0.16_75)] hover:text-white cursor-pointer"
+          >
+            MEMBERS
+          </Link>
+        )}
       </nav>
 
       <div className="flex-1" />
@@ -37,12 +51,12 @@ export default function Nav() {
         </Link>
       </div>
 
-      <a
-        href="#pricing"
+      <Link
+        href="/pricing"
         className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-sm border border-[oklch(0.82_0.16_75/0.55)] bg-[oklch(0.82_0.16_75/0.14)] text-[oklch(0.82_0.16_75)] text-[11px] uppercase tracking-[0.12em] hover:bg-[oklch(0.82_0.16_75/0.22)] whitespace-nowrap"
       >
         SUBSCRIBE
-      </a>
+      </Link>
 
       <button
         aria-label="Menu"
