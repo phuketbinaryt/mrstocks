@@ -19,6 +19,7 @@ describe('sendMagicLinkEmail', () => {
     process.env.AUTH_URL = 'http://localhost:3200';
     process.env.RESEND_API_KEY = 're_test';
     process.env.EMAIL_FROM = 'noreply@example.com';
+    process.env.INGEST_SHARED_SECRET = 'x'.repeat(64);
   });
 
   it('calls Resend with the magic link URL and recipient', async () => {

@@ -30,6 +30,7 @@ jobs:
       AUTH_URL: http://localhost:3200
       RESEND_API_KEY: re_test_ci
       EMAIL_FROM: noreply@example.com
+      INGEST_SHARED_SECRET: 0000000000000000000000000000000000000000000000000000000000000000
 
     steps:
       - uses: actions/checkout@v4

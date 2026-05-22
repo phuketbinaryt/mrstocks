@@ -2,7 +2,14 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 describe('env', () => {
   const originals: Record<string, string | undefined> = {};
-  const keys = ['DATABASE_URL', 'AUTH_SECRET', 'AUTH_URL', 'RESEND_API_KEY', 'EMAIL_FROM'];
+  const keys = [
+    'DATABASE_URL',
+    'AUTH_SECRET',
+    'AUTH_URL',
+    'RESEND_API_KEY',
+    'EMAIL_FROM',
+    'INGEST_SHARED_SECRET',
+  ];
 
   beforeEach(() => {
     for (const k of keys) originals[k] = process.env[k];
@@ -20,6 +27,7 @@ describe('env', () => {
     process.env.AUTH_URL = 'http://localhost:3200';
     process.env.RESEND_API_KEY = 're_test';
     process.env.EMAIL_FROM = 'noreply@example.com';
+    process.env.INGEST_SHARED_SECRET = 'x'.repeat(64);
 
     const { env } = await import('@/lib/env');
     expect(env.DATABASE_URL).toMatch(/^postgres:\/\//);

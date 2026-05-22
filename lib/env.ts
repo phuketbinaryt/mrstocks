@@ -9,6 +9,7 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().min(1),
     EMAIL_FROM: z.string().email(),
     REDIS_URL: z.string().url().startsWith('redis://').optional(),
+    INGEST_SHARED_SECRET: z.string().min(32),
   },
   client: {},
   runtimeEnv: {
@@ -18,6 +19,7 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
     REDIS_URL: process.env.REDIS_URL,
+    INGEST_SHARED_SECRET: process.env.INGEST_SHARED_SECRET,
   },
   emptyStringAsUndefined: true,
 });
