@@ -1,0 +1,46 @@
+---
+title: Setup states explained
+slug: states-explained
+category: Basics
+order: 2
+draft: false
+updated: 2026-05-23
+---
+
+# Setup states explained
+
+Each candidate on the dashboard carries one of a small number of **setup state** labels. The state captures *what kind of price action the symbol has been doing relative to its 20-day moving average and recent realized volatility.* Read the state first — it tells you what mental model to apply before you even open the chart.
+
+## NARROW
+
+The symbol is trading in a tight range, close to its 20MA, with sub-average realized volatility over the prior ~10 sessions. NARROW is the bread-and-butter setup: a coiling structure that often precedes a directional expansion. The thesis is "this thing is loaded; the next material move is more likely to *stick* than to be noise."
+
+**Common play:** wait for a clean expansion candle out of the range during RTH; enter on a close above (long) or below (short) the range high/low; risk to the opposite side of the range.
+
+**Pitfall:** NARROW names that have *already* expanded before you see them. Always check whether the trigger candle has already fired.
+
+## WIDE SNAPBACK
+
+The symbol is far from its 20MA (multiple ATRs away) and has recently traveled fast in one direction. The thesis is mean reversion: the move has been too steep to sustain without a pullback. WIDE SNAPBACK is *not* a "fade the trend" signal — it's "expect a counter-move within the next 1–3 sessions."
+
+**Common play:** fade the extreme on a clear stalling pattern (lower-high after a thrust up, higher-low after a thrust down). Tight risk to the prior thrust extreme.
+
+**Pitfall:** WIDE SNAPBACK in a strong trend can keep going. The setup has higher hit-rate when the broader index is also stretched.
+
+## WIDE EXTENSION
+
+Similar geometry to WIDE SNAPBACK — symbol is multiple ATRs from the 20MA — but the *recent* trajectory is still in the direction of the extension (i.e. it's making fresh highs/lows rather than stalling). The thesis is trend continuation in the short term. Use this as a *do not fade* warning more than a primary entry signal.
+
+**Common play:** if you must trade WIDE EXTENSION, wait for a tight intraday pullback toward the prior day's range; enter on the resumption.
+
+**Pitfall:** late entries here are where most account damage comes from. The bigger the gap from MA, the worse the R:R on continuation.
+
+## MEDIUM
+
+Everything else. The symbol is between its 20MA and the WIDE-zone threshold; no special tightness, no special extension. MEDIUM names are on the dashboard because their **score** crossed the universe filter — usually a combination of dollar-volume, slope, or zone position made them notable — but the setup itself is unremarkable.
+
+**Common play:** treat MEDIUM as watch-list material, not trade material. The interesting move is whether they migrate toward NARROW (compression) or toward a WIDE state (expansion) over the following sessions.
+
+## How to act on them
+
+The state alone is not enough. Pair it with the **Prior45 zone** (where in the recent 45-session range the symbol is currently trading) and the **score** (the scanner's composite ranking). A NARROW name in zone Lower #2 with score >75 is a much more interesting setup than a NARROW name in zone Inside with score 40. The next two articles cover both.

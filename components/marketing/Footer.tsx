@@ -28,9 +28,10 @@ export default function Footer() {
     {
       h: 'EDUCATION',
       items: [
-        { label: 'What is SMA20/200?', href: '#' },
-        { label: 'Prior45 zones', href: '#' },
-        { label: "Trader's guide", href: '#' },
+        { label: 'All articles', href: '/education' },
+        { label: 'Setup states', href: '/education/states-explained' },
+        { label: 'Prior45 zones', href: '/education/prior45-zones' },
+        { label: 'Reading a card', href: '/education/reading-a-card' },
       ],
     },
     {

@@ -1,0 +1,69 @@
+---
+title: How to read a candidate card
+slug: reading-a-card
+category: Basics
+order: 4
+draft: false
+updated: 2026-05-23
+---
+
+# How to read a candidate card
+
+Each candidate on the dashboard is a single tile packing the entire pre-market read of a symbol into one glanceable card. Once you know what each field is, you can triage a 60-name scan in under a minute. Here's the anatomy.
+
+## Top row: symbol + state badge
+
+The largest text on the card is the ticker. The colored chip below is the **setup state** — one of NARROW, WIDE SNAPBACK, WIDE EXTENSION, MEDIUM. State chips are color-coded so you can spot the distribution of setup types at a glance without reading individual labels.
+
+State color conventions (subject to design refinement):
+
+- NARROW — green
+- WIDE SNAPBACK — amber
+- WIDE EXTENSION — red
+- MEDIUM — neutral
+
+## Score
+
+A numeric value from 0 to 100. The score is a composite of distance-to-20MA-in-ATR, range tightness, slope, gap behavior, and liquidity — weighted by the scanner's internal model. **Higher is more interesting**, not more bullish. A score of 85 means "this candidate is in the top 15% of the day's scan by the scanner's ranking"; it says nothing about direction. Use score to rank within state — a 85-score NARROW is more notable than a 50-score NARROW.
+
+## MA distance (ATR)
+
+The number of ATRs the current close is from the 20-day moving average. Roughly:
+
+- `0.0 – 0.5` — at the MA. Pairs with NARROW.
+- `0.5 – 1.5` — modestly extended.
+- `1.5 – 3.0` — WIDE territory.
+- `> 3.0` — extreme. Often a recent gap or news event.
+
+ATR is the 14-period Average True Range — a volatility-normalized measure. 2 ATRs from MA means roughly two "typical days of movement" from the MA. That makes the number comparable across symbols of very different price levels (a $400 stock and a $40 stock both at 1.5 ATR are similarly stretched).
+
+## Gap %
+
+Today's overnight gap as a percent of yesterday's close. A 3% gap on a typical name is large; a 0.2% gap is noise. Used both as a feature in the score and as a sanity check. A NARROW name that gapped 4% overnight is no longer truly NARROW for today's purposes — be cautious.
+
+## Slope
+
+The 10-day slope of the 20MA, normalized. Roughly:
+
+- `> +1` — strong uptrend
+- `0 to +1` — mild uptrend
+- `0 to -1` — mild downtrend
+- `< -1` — strong downtrend
+
+Slope tells you which side of the trade has trend tailwind. NARROW + positive slope + Lower #2 zone is a long-bias coil. NARROW + negative slope + Upper #2 zone is a short-bias coil. Same setup, opposite plays.
+
+## Watch direction
+
+A small arrow indicator (where applicable) showing whether the scanner expects the directional break to favor up or down based on the combination of all features above. This is a hint, not a directive — your chart read is the final word.
+
+## Prior45 position
+
+A short text label like "L2" (Lower #2), "U3" (Upper #3), or "IN" (Inside). Tap the card to open the per-symbol page where the full Prior45 zone band is rendered visually. See [Prior45 zones](/education/prior45-zones) for the meaning of each band.
+
+## Putting it together
+
+A high-conviction card looks something like: **NARROW, score 82, MA dist 0.3, gap 0.1%, slope +1.2, U2.** Translation: a tight coil right at its MA, no overnight gap, in a healthy uptrend, near recent highs. That's a setup worth opening a chart for.
+
+A pass looks like: **MEDIUM, score 45, MA dist 1.1, gap 2.8%, slope -0.4, IN.** Translation: mid-range, mid-distance from MA, gapped overnight, weak trend, middle of the 45-day range. Nothing actionable.
+
+Practice triage on the first 10 cards of any morning's scan and you'll be fluent within a week.

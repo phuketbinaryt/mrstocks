@@ -1,0 +1,49 @@
+---
+title: The Prior45 zone system
+slug: prior45-zones
+category: Concepts
+order: 3
+draft: false
+updated: 2026-05-23
+---
+
+# The Prior45 zone system
+
+The **Prior45 zone band** is a horizontal strip on each symbol detail page that divides the prior-45-session price range into seven labelled regions. The symbol's current closing price sits in one of them, and that placement materially changes what the setup *means*. Same setup state, different zone, different thesis.
+
+## How the band is built
+
+Take the highest high and lowest low of the prior 45 daily candles. That's the outer envelope. Inside that envelope, three bands are drawn above the 22-session midpoint and three below it. The midpoint zone itself is labelled **Inside**.
+
+- **Upper #1** — just above midpoint, still well within range
+- **Upper #2** — into the upper third of the 45-day range
+- **Upper #3** — at or near the 45-day high
+- **Inside** — the middle band centered on the 45-day midpoint
+- **Lower #1** — just below midpoint
+- **Lower #2** — into the lower third
+- **Lower #3** — at or near the 45-day low
+
+The band is a *position* indicator, not a momentum one. A symbol can sit in Upper #3 for weeks (strong trend) or arrive there in two days (extension).
+
+## How the zone changes thesis
+
+The zone tells you **where in the prior range the next move would happen from.** This affects R:R asymmetrically.
+
+### NARROW in Lower #2 / Lower #3
+Coiling near the lows. If it expands up, you're catching the move *from* a multi-week low — long R:R is excellent because the prior low is a hard, recent reference for the stop. If it expands down, you're shorting a name already at the low — riskier, lower hit rate.
+
+### NARROW in Upper #2 / Upper #3
+Coiling near the highs. The mirror image. Long breakouts here are often immediately retraced because there's no nearby support. Short setups in this zone are higher-conviction *if* the broader market is also extended.
+
+### WIDE SNAPBACK in Upper #3
+Stretched above 20MA AND near 45-day high. The mean-reversion thesis is sharpest here — the symbol has nowhere left to go on the upside in the short term. Highest-probability fade setups live in this combo.
+
+### WIDE SNAPBACK in Inside
+Symbol is multiple ATRs from MA but only mid-range over 45 days. This is a less reliable mean-reversion setup because the symbol *has* recently been higher/lower than where it sits now — the "stretched" reading is shorter-term.
+
+### Any state in Inside
+The middle zone is the lowest-information zone. Treat any candidate sitting in Inside with one extra grain of salt; the scanner ranks them on other features (slope, score, gap behavior) and they can still be tradeable, but the zone isn't doing meaningful filtering work.
+
+## Using zones in alert rules
+
+Most members configure alert rules that target *specific zone combinations* — for example, "fire on NARROW + Lower #2 or Lower #3, min score 70, my mega-cap watchlist." This makes the alert queue actionable instead of noisy. Configure your zone selections on the `/alerts/new` page.

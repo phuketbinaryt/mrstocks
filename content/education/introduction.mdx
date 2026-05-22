@@ -1,0 +1,40 @@
+---
+title: What MR/STOCKS does
+slug: introduction
+category: Basics
+order: 1
+draft: false
+updated: 2026-05-23
+---
+
+# What MR/STOCKS does
+
+MR/STOCKS is a pre-market stock scanner that runs at **09:15 ET every trading day** and surfaces a short list of US equities exhibiting a small set of well-defined volatility-contraction and mean-reversion setups. The output is intentionally narrow — typically 20–60 names a day, drawn from a universe of roughly 1,500 large- and mid-cap symbols that pass minimum dollar-volume and price filters.
+
+## The daily flow
+
+Every weekday at 09:15 ET, the scanner finishes computing and POSTs a fresh `scan` payload to this site. By the time you open the dashboard, the new candidates are already there. Nothing on the page changes intraday — the same list of names you see at 09:20 is the same list you see at 15:55. That's by design: MR/STOCKS gives you a **pre-market read**, then you take it to your charts.
+
+The dashboard is the home base. It shows the full list of today's candidates, grouped and color-coded by setup state. Each row is one symbol with a glanceable summary card. Tap any card to open the per-symbol detail page with the Prior45 zone band, distance-to-20MA in ATR units, slope, gap, and the prior 45 days of daily ranges visualized.
+
+## What a member sees
+
+Three first-class surfaces:
+
+1. **`/dashboard`** — today's full scan. Filter by state, sort by score, hide names not in one of your watchlists.
+2. **`/watchlists`** — your own lists of symbols. The dashboard can be filtered to "only show me names from list X." Useful if you trade a focused universe (e.g. semis, large-cap energy, your own swing book).
+3. **`/alerts`** — rules that fire when tomorrow's scan contains a name matching your criteria (setup state, Prior45 zone, minimum score, watchlist membership). Notifications arrive via email and/or web push within seconds of the scan landing.
+
+## What it does NOT do
+
+- **Not real-time.** The scanner does not stream intraday. If you want to know what happened to AMD at 10:47:23 ET, this is the wrong tool.
+- **Not signals.** A candidate is a *setup*, not a buy. The scanner says "this name is in a tight range against its 20MA with no recent gap" — what you do with that is your job.
+- **Not advice.** Read `/legal/terms` for the full disclaimer. Trade your own book.
+
+## Where to go from here
+
+- Read [States explained](/education/states-explained) to learn what NARROW, WIDE SNAPBACK, and the other setup labels actually mean.
+- Read [Prior45 zones](/education/prior45-zones) to understand the zone band on each card.
+- Read [Reading a card](/education/reading-a-card) to decode every field on the dashboard tile.
+
+Welcome aboard.
