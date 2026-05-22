@@ -20,6 +20,12 @@ describe('sendMagicLinkEmail', () => {
     process.env.RESEND_API_KEY = 're_test';
     process.env.EMAIL_FROM = 'noreply@example.com';
     process.env.INGEST_SHARED_SECRET = 'x'.repeat(64);
+    process.env.WHOP_CLIENT_ID = 'wp_test';
+    process.env.WHOP_CLIENT_SECRET = 'wpsec_test';
+    process.env.WHOP_API_KEY = 'wpkey_test';
+    process.env.WHOP_WEBHOOK_SECRET = 'x'.repeat(32);
+    process.env.WHOP_PASS_ID = 'pass_test';
+    process.env.WHOP_CHECKOUT_URL = 'https://whop.com/checkout/test';
   });
 
   it('calls Resend with the magic link URL and recipient', async () => {

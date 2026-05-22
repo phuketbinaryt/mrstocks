@@ -9,10 +9,22 @@ describe('env', () => {
     'RESEND_API_KEY',
     'EMAIL_FROM',
     'INGEST_SHARED_SECRET',
+    'WHOP_CLIENT_ID',
+    'WHOP_CLIENT_SECRET',
+    'WHOP_API_KEY',
+    'WHOP_WEBHOOK_SECRET',
+    'WHOP_PASS_ID',
+    'WHOP_CHECKOUT_URL',
   ];
 
   beforeEach(() => {
     for (const k of keys) originals[k] = process.env[k];
+    process.env.WHOP_CLIENT_ID = 'wp_test';
+    process.env.WHOP_CLIENT_SECRET = 'wpsec_test';
+    process.env.WHOP_API_KEY = 'wpkey_test';
+    process.env.WHOP_WEBHOOK_SECRET = 'x'.repeat(32);
+    process.env.WHOP_PASS_ID = 'pass_test';
+    process.env.WHOP_CHECKOUT_URL = 'https://whop.com/checkout/test';
   });
   afterEach(() => {
     for (const k of keys) {
@@ -33,5 +45,7 @@ describe('env', () => {
     expect(env.DATABASE_URL).toMatch(/^postgres:\/\//);
     expect(env.AUTH_SECRET.length).toBeGreaterThanOrEqual(32);
     expect(env.EMAIL_FROM).toBe('noreply@example.com');
+    expect(env.WHOP_CLIENT_ID).toBe('wp_test');
+    expect(env.WHOP_CHECKOUT_URL).toBe('https://whop.com/checkout/test');
   });
 });
