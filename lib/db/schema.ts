@@ -7,7 +7,11 @@ import {
   uuid,
   numeric,
   jsonb,
+  boolean,
+  index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 import type { AdapterAccountType } from 'next-auth/adapters';
 
 export const users = pgTable('users', {
@@ -116,3 +120,45 @@ export const memberships = pgTable('memberships', {
   currentPeriodEnd: timestamp('current_period_end', { mode: 'date', withTimezone: true }),
   updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
 });
+
+export const watchlists = pgTable(
+  'watchlists',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    isDefault: boolean('is_default').notNull().default(false),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('watchlists_user_id_idx').on(table.userId),
+    // Enforce at most one default per user via a partial unique index.
+    // Drizzle expresses partial indexes via .where().
+    oneDefaultPerUser: uniqueIndex('one_default_per_user')
+      .on(table.userId)
+      .where(sql`is_default = TRUE`),
+  }),
+);
+
+export const watchlistSymbols = pgTable(
+  'watchlist_symbols',
+  {
+    watchlistId: uuid('watchlist_id')
+      .notNull()
+      .references(() => watchlists.id, { onDelete: 'cascade' }),
+    symbol: text('symbol').notNull(),
+    addedAt: timestamp('added_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.watchlistId, table.symbol] }),
+    symbolIdx: index('watchlist_symbols_symbol_idx').on(table.symbol),
+  }),
+);
