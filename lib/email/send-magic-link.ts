@@ -20,8 +20,9 @@ export async function sendMagicLinkEmail({ to, url }: { to: string; url: string 
 
 function renderHtml(url: string): string {
   // Brand-matched email: black bg, amber accent, monospace.
-  // Inlined styles only — most email clients strip <style> blocks.
-  const amber = 'oklch(0.82 0.16 75)';
+  // Email-safe hex values only — oklch() is stripped by Gmail/Outlook/Apple Mail.
+  // The button uses solid amber fill with near-black text for high contrast.
+  const amber = '#E8A33D'; // hex approximation of oklch(0.82 0.16 75)
   const mono = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
   return `
     <div style="background:#000;padding:32px 16px;font-family:${mono};color:#fff;">
@@ -32,17 +33,26 @@ function renderHtml(url: string): string {
         <h1 style="font-size:18px;font-weight:500;letter-spacing:0.04em;margin:0 0 12px 0;color:#fff;">
           Sign in to your account
         </h1>
-        <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.7);margin:0 0 24px 0;">
-          Click the button below to sign in. This link expires in 30 minutes
+        <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.7);margin:0 0 28px 0;">
+          Tap the button below to sign in. This link expires in 30 minutes
           and can only be used once.
         </p>
-        <a href="${url}"
-           style="display:inline-block;border:1px solid ${amber};background:rgba(232,178,77,0.14);color:${amber};font-family:${mono};font-size:12px;letter-spacing:0.12em;text-transform:uppercase;padding:12px 20px;text-decoration:none;">
-          Sign in &rarr;
-        </a>
-        <p style="font-size:11px;line-height:1.6;color:rgba(255,255,255,0.45);margin:28px 0 0 0;">
-          Or paste this URL into your browser:<br/>
-          <span style="color:rgba(255,255,255,0.65);word-break:break-all;">${url}</span>
+
+        <!-- Bulletproof button: table wrap for Outlook on Windows -->
+        <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:0 auto 0 0;">
+          <tr>
+            <td style="background:${amber};border-radius:2px;">
+              <a href="${url}"
+                 style="display:inline-block;background:${amber};color:#0B0B0B;font-family:${mono};font-size:13px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:14px 28px;text-decoration:none;border-radius:2px;mso-padding-alt:0;">
+                Sign in to MR/STOCKS &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size:11px;line-height:1.6;color:rgba(255,255,255,0.55);margin:28px 0 0 0;">
+          Button not working? Paste this URL into your browser:<br/>
+          <a href="${url}" style="color:${amber};word-break:break-all;text-decoration:underline;">${url}</a>
         </p>
         <hr style="border:none;border-top:1px solid rgba(255,255,255,0.10);margin:24px 0;"/>
         <p style="font-size:11px;line-height:1.6;color:rgba(255,255,255,0.45);margin:0;">
