@@ -30,7 +30,7 @@ export default function Nav() {
       <div className="hidden md:flex items-center gap-3">
         <LivePill />
         <Link
-          href="/login"
+          href="/signin"
           className="text-[11px] uppercase tracking-[0.1em] text-white/75 hover:text-white"
         >
           SIGN IN
