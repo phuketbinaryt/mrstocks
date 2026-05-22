@@ -31,6 +31,12 @@ jobs:
       RESEND_API_KEY: re_test_ci
       EMAIL_FROM: noreply@example.com
       INGEST_SHARED_SECRET: "0000000000000000000000000000000000000000000000000000000000000000"
+      WHOP_CLIENT_ID: ci_test
+      WHOP_CLIENT_SECRET: ci_test
+      WHOP_API_KEY: ci_test
+      WHOP_WEBHOOK_SECRET: "0000000000000000000000000000000000000000000000000000000000000000"
+      WHOP_PASS_ID: pass_test
+      WHOP_CHECKOUT_URL: https://whop.com/checkout/test
 
     steps:
       - uses: actions/checkout@v4
