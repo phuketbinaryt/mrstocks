@@ -4,12 +4,70 @@ import { verifyHmac } from '@/lib/ingest/verify-hmac';
 import { scanPayloadSchema } from '@/lib/ingest/schema';
 import { saveScan } from '@/lib/ingest/save-scan';
 import { getEvaluateAlertsQueue } from '@/lib/queue/queues';
+import { getRedis } from '@/lib/queue/redis';
 
 // Node runtime (Drizzle + crypto + postgres.js don't work on Edge).
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const RATE_LIMIT_MAX = 5; // requests per window
+const RATE_LIMIT_WINDOW_SEC = 60;
+
+/**
+ * Simple per-IP fixed-window counter on Redis. 5 req / 60s.
+ *
+ * Returns { ok: true } on allow, { ok: false, retryAfter } on deny.
+ * Redis errors fail-open (don't block ingest if Redis is down) — the
+ * HMAC + payload validation still gates the endpoint.
+ */
+async function checkRateLimit(
+  ip: string,
+): Promise<{ ok: true } | { ok: false; retryAfter: number; count: number }> {
+  try {
+    const r = getRedis();
+    const key = `rl:ingest:${ip}`;
+    const count = await r.incr(key);
+    if (count === 1) {
+      await r.expire(key, RATE_LIMIT_WINDOW_SEC);
+    }
+    if (count > RATE_LIMIT_MAX) {
+      const ttl = await r.ttl(key);
+      return {
+        ok: false,
+        retryAfter: ttl > 0 ? ttl : RATE_LIMIT_WINDOW_SEC,
+        count,
+      };
+    }
+    return { ok: true };
+  } catch (err) {
+    // Fail-open. Log so we notice if Redis goes down on prod.
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn('[ingest/scan] rate-limit check failed (fail-open):', message);
+    return { ok: true };
+  }
+}
+
+function clientIp(req: NextRequest): string {
+  const xff = req.headers.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0].trim();
+  return req.headers.get('x-real-ip') ?? '127.0.0.1';
+}
+
 export async function POST(req: NextRequest) {
+  // 0. Per-IP rate limit. Runs before HMAC verification so a stuck/
+  //    misconfigured uploader can't burn CPU on signature checks.
+  const ip = clientIp(req);
+  const rl = await checkRateLimit(ip);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'rate limit exceeded', retryAfter: rl.retryAfter },
+      {
+        status: 429,
+        headers: { 'retry-after': String(rl.retryAfter) },
+      },
+    );
+  }
+
   // 1. Read the raw body for HMAC verification before parsing.
   const body = await req.text();
   const sig = req.headers.get('x-signature') ?? '';
