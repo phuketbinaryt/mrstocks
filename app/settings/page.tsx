@@ -11,10 +11,24 @@ import PushEnableButton from '@/components/settings/PushEnableButton';
 export const metadata = { title: 'Settings — MR/STOCKS' };
 export const dynamic = 'force-dynamic';
 
-// Stub: the Whop management URL is the same for all users today (no
-// per-customer dashboard URL). The user can paste a per-product URL into
-// WHOP_MANAGE_URL in a follow-up.
-const WHOP_MANAGE_URL = 'https://whop.com/orders';
+/**
+ * Per-product Whop "manage subscription" URL.
+ *
+ * Whop's convention is that swapping `/checkout/<plan_id>` →
+ * `/manage/<plan_id>` lands the user on the management page for that
+ * specific subscription. We derive it from WHOP_CHECKOUT_URL so the two
+ * stay in lock-step.
+ *
+ * If WHOP_CHECKOUT_URL doesn't match the `/checkout/` pattern (legacy
+ * config), fall back to the generic orders page.
+ */
+function deriveManageUrl(checkoutUrl: string): string {
+  if (checkoutUrl.includes('/checkout/')) {
+    return checkoutUrl.replace('/checkout/', '/manage/');
+  }
+  return 'https://whop.com/orders';
+}
+const WHOP_MANAGE_URL = deriveManageUrl(env.WHOP_CHECKOUT_URL);
 
 export default async function SettingsPage() {
   const session = await requireActiveMembership('/settings');
@@ -155,7 +169,7 @@ export default async function SettingsPage() {
               </button>
             </form>
             <span className="text-[10px] uppercase tracking-[0.1em] text-white/35">
-              SCANNER V2.4 · PHASE 3
+              SCANNER V2.4
             </span>
           </div>
         </div>
