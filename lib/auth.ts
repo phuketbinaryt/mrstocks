@@ -32,5 +32,66 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         await sendMagicLinkEmail({ to: identifier, url });
       },
     },
+    // Whop OAuth — custom provider (no off-the-shelf @auth/whop adapter).
+    // OAuth endpoints sourced from https://docs.whop.com (Q2 2026):
+    //   authorize: https://whop.com/oauth
+    //   token:     https://api.whop.com/api/v5/oauth/token
+    //   userinfo:  https://api.whop.com/api/v5/me
+    // If any of these 404 at execution time, check docs.whop.com — the
+    // network-tab error from Auth.js will surface the offending URL.
+    {
+      id: 'whop',
+      name: 'Whop',
+      type: 'oauth',
+      clientId: env.WHOP_CLIENT_ID,
+      clientSecret: env.WHOP_CLIENT_SECRET,
+      authorization: {
+        url: 'https://whop.com/oauth',
+        params: {
+          scope: 'openid profile email',
+          response_type: 'code',
+        },
+      },
+      token: 'https://api.whop.com/api/v5/oauth/token',
+      userinfo: 'https://api.whop.com/api/v5/me',
+      profile(profile: {
+        id: string;
+        username?: string;
+        email: string;
+        profile_pic_url?: string | null;
+      }) {
+        return {
+          id: profile.id,
+          name: profile.username ?? profile.email,
+          email: profile.email,
+          image: profile.profile_pic_url ?? null,
+        };
+      },
+      // Merge by email with an existing email-magic-link account.
+      allowDangerousEmailAccountLinking: true,
+    },
   ],
+  events: {
+    async signIn({ user, account }) {
+      if (account?.provider !== 'whop') return;
+      const whopUserId = account.providerAccountId;
+      if (!user.id || !whopUserId) return;
+      try {
+        const { getActiveMembershipForUser } = await import('@/lib/whop/client');
+        const { upsertMembershipFromWhop } = await import(
+          '@/lib/membership/upsert'
+        );
+        const m = await getActiveMembershipForUser(whopUserId);
+        if (m) {
+          await upsertMembershipFromWhop({
+            userId: user.id,
+            whopMembership: m,
+          });
+        }
+      } catch (err) {
+        console.error('[auth.signIn] whop membership lookup failed:', err);
+        // non-fatal — webhook will catch them up
+      }
+    },
+  },
 });
