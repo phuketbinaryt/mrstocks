@@ -1,4 +1,13 @@
-import { pgTable, text, timestamp, primaryKey, integer } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  timestamp,
+  primaryKey,
+  integer,
+  uuid,
+  numeric,
+  jsonb,
+} from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 
 export const users = pgTable('users', {
@@ -51,5 +60,47 @@ export const verificationTokens = pgTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+);
+
+export const scans = pgTable('scans', {
+  id: uuid('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  generatedAt: timestamp('generated_at', { mode: 'date', withTimezone: true }).notNull().unique(),
+  scannerName: text('scanner_name').notNull(),
+  feed: text('feed'),
+  barSeconds: integer('bar_seconds'),
+  universeSize: integer('universe_size'),
+  candidateCount: integer('candidate_count').notNull(),
+  settings: jsonb('settings'),
+  raw: jsonb('raw').notNull(),
+  ingestedAt: timestamp('ingested_at', { mode: 'date', withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const scanCandidates = pgTable(
+  'scan_candidates',
+  {
+    scanId: uuid('scan_id')
+      .notNull()
+      .references(() => scans.id, { onDelete: 'cascade' }),
+    symbol: text('symbol').notNull(),
+    state: text('state').notNull(),
+    watch: text('watch'),
+    location: text('location'),
+    score: numeric('score'),
+    lastPrice: numeric('last_price'),
+    maDistanceAtr: numeric('ma_distance_atr'),
+    maDistancePct: numeric('ma_distance_pct'),
+    gapAtr: numeric('gap_atr'),
+    avgDollarVolume: numeric('avg_dollar_volume'),
+    prior45Position: text('prior45_position'),
+    prior45Action: text('prior45_action'),
+    data: jsonb('data').notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.scanId, table.symbol] }),
   }),
 );
