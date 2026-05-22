@@ -73,24 +73,50 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   events: {
     async signIn({ user, account }) {
-      if (account?.provider !== 'whop') return;
-      const whopUserId = account.providerAccountId;
-      if (!user.id || !whopUserId) return;
-      try {
-        const { getActiveMembershipForUser } = await import('@/lib/whop/client');
-        const { upsertMembershipFromWhop } = await import(
-          '@/lib/membership/upsert'
-        );
-        const m = await getActiveMembershipForUser(whopUserId);
-        if (m) {
-          await upsertMembershipFromWhop({
-            userId: user.id,
-            whopMembership: m,
-          });
+      // Whop JIT membership lookup — only runs for the Whop OAuth provider.
+      if (account?.provider === 'whop') {
+        const whopUserId = account.providerAccountId;
+        if (user.id && whopUserId) {
+          try {
+            const { getActiveMembershipForUser } = await import(
+              '@/lib/whop/client'
+            );
+            const { upsertMembershipFromWhop } = await import(
+              '@/lib/membership/upsert'
+            );
+            const m = await getActiveMembershipForUser(whopUserId);
+            if (m) {
+              await upsertMembershipFromWhop({
+                userId: user.id,
+                whopMembership: m,
+              });
+            }
+          } catch (err) {
+            console.error(
+              '[auth.signIn] whop membership lookup failed:',
+              err,
+            );
+            // non-fatal — webhook will catch them up
+          }
         }
-      } catch (err) {
-        console.error('[auth.signIn] whop membership lookup failed:', err);
-        // non-fatal — webhook will catch them up
+      }
+
+      // Bootstrap a default watchlist for new users (idempotent — no-op if
+      // they already have one). Runs for every provider so magic-link
+      // users also get an "All signals" list on first sign-in.
+      if (user.id) {
+        try {
+          const { ensureDefaultWatchlistForUser } = await import(
+            '@/lib/watchlists/actions'
+          );
+          await ensureDefaultWatchlistForUser(user.id);
+        } catch (err) {
+          console.error(
+            '[auth.signIn] ensureDefaultWatchlist failed:',
+            err,
+          );
+          // Non-fatal — user can create one manually from /watchlists/new.
+        }
       }
     },
   },
