@@ -6,6 +6,7 @@ import { accounts } from '@/lib/db/schema';
 import { and, eq } from 'drizzle-orm';
 import type { WhopMembership } from '@/lib/whop/types';
 import { upsertMembershipFromWhop } from '@/lib/membership/upsert';
+import { logAuditEvent } from '@/lib/audit/log';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -67,6 +68,32 @@ export async function POST(req: NextRequest) {
         userId: acct[0].userId,
         whopMembership: m,
       });
+      // Audit cancellations and payment failures — the things we want a
+      // visible trail of. went_valid + payment.succeeded are "happy path"
+      // and stay out of the audit log.
+      if (evt === 'membership.went_invalid') {
+        await logAuditEvent({
+          actorUserId: null,
+          action: 'member.subscription_canceled',
+          target: acct[0].userId,
+          meta: {
+            event: evt,
+            whopMembershipId: m.id ?? null,
+            whopUserId: m.user ?? null,
+          },
+        });
+      } else if (evt === 'payment.failed') {
+        await logAuditEvent({
+          actorUserId: null,
+          action: 'member.payment_failed',
+          target: acct[0].userId,
+          meta: {
+            event: evt,
+            whopMembershipId: m.id ?? null,
+            whopUserId: m.user ?? null,
+          },
+        });
+      }
       break;
     default:
       // Acknowledge so Whop stops retrying.

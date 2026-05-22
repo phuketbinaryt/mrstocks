@@ -3,6 +3,7 @@ import { and, eq } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { pushSubscriptions } from '@/lib/db/schema';
+import { logAuditEvent } from '@/lib/audit/log';
 
 export const runtime = 'nodejs';
 
@@ -19,13 +20,23 @@ export async function POST(req: NextRequest) {
   if (!body?.endpoint) {
     return NextResponse.json({ error: 'invalid body' }, { status: 400 });
   }
-  await db
+  const deleted = await db
     .delete(pushSubscriptions)
     .where(
       and(
         eq(pushSubscriptions.userId, session.user.id),
         eq(pushSubscriptions.endpoint, body.endpoint),
       ),
-    );
+    )
+    .returning({ id: pushSubscriptions.id });
+
+  if (deleted.length > 0) {
+    await logAuditEvent({
+      actorUserId: session.user.id,
+      action: 'member.push_disabled',
+      target: session.user.id,
+      meta: null,
+    });
+  }
   return NextResponse.json({ ok: true });
 }

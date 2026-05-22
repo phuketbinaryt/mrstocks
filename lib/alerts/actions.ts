@@ -7,6 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { ALL_STATES, ALL_ZONES } from './types';
+import { logAuditEvent } from '@/lib/audit/log';
 
 async function userIdOrThrow(): Promise<string> {
   const session = await auth();
@@ -105,6 +106,19 @@ export async function createRule(input: CreateRuleInput): Promise<{ id: string }
     })
     .returning({ id: alertRules.id });
 
+  await logAuditEvent({
+    actorUserId: userId,
+    action: 'member.alert_rule_created',
+    target: row.id,
+    meta: {
+      name: data.name,
+      states: data.states,
+      zones: data.zones,
+      channels: data.channels,
+      minScore: data.minScore,
+    },
+  });
+
   revalidatePath('/alerts');
   return { id: row.id };
 }
@@ -153,9 +167,18 @@ export async function toggleRuleActive(id: string): Promise<void> {
 
 export async function deleteRule(id: string): Promise<void> {
   const userId = await userIdOrThrow();
-  await db
+  const deleted = await db
     .delete(alertRules)
-    .where(and(eq(alertRules.id, id), eq(alertRules.userId, userId)));
+    .where(and(eq(alertRules.id, id), eq(alertRules.userId, userId)))
+    .returning({ id: alertRules.id, name: alertRules.name });
+  if (deleted.length > 0) {
+    await logAuditEvent({
+      actorUserId: userId,
+      action: 'member.alert_rule_deleted',
+      target: id,
+      meta: { name: deleted[0].name },
+    });
+  }
   revalidatePath('/alerts');
 }
 

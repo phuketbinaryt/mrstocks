@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { pushSubscriptions } from '@/lib/db/schema';
+import { logAuditEvent } from '@/lib/audit/log';
 
 export const runtime = 'nodejs';
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid body' }, { status: 400 });
   }
 
-  await db
+  const result = await db
     .insert(pushSubscriptions)
     .values({
       userId: session.user.id,
@@ -34,7 +35,21 @@ export async function POST(req: NextRequest) {
       authKey: body.keys.auth,
       userAgent: req.headers.get('user-agent') ?? null,
     })
-    .onConflictDoNothing();
+    .onConflictDoNothing()
+    .returning({ id: pushSubscriptions.id });
+
+  // Only audit if we actually inserted a new row (idempotent re-subscribe
+  // is uninteresting noise).
+  if (result.length > 0) {
+    await logAuditEvent({
+      actorUserId: session.user.id,
+      action: 'member.push_enabled',
+      target: session.user.id,
+      meta: {
+        userAgent: req.headers.get('user-agent')?.slice(0, 200) ?? null,
+      },
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }
