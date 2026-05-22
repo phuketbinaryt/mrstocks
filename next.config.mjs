@@ -12,4 +12,17 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
 };
 
-export default nextConfig;
+// Conditionally wrap with Sentry. If SENTRY_DSN is unset (dev, CI), skip
+// the wrapper entirely so we don't depend on Sentry being configured.
+let exported = nextConfig;
+if (process.env.SENTRY_DSN) {
+  const { withSentryConfig } = await import('@sentry/nextjs');
+  exported = withSentryConfig(nextConfig, {
+    silent: true,
+    // We're not uploading source maps to Sentry yet — leave that for when
+    // the user grants an auth token. Builds still work without it.
+    disableLogger: true,
+  });
+}
+
+export default exported;

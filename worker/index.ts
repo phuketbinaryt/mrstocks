@@ -12,11 +12,23 @@
  */
 import 'dotenv/config';
 import { Worker } from 'bullmq';
+import * as Sentry from '@sentry/node';
 import { getRedis } from '@/lib/queue/redis';
 import { QUEUE_NAMES } from '@/lib/queue/queues';
 import { runEvaluateAlerts } from './evaluate-alerts';
 import { runSendEmail } from './send-email';
 import { runSendWebpush } from './send-webpush';
+
+// Sentry — gated on SENTRY_DSN being set. No-op when absent.
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 0.1,
+    enabled: process.env.NODE_ENV === 'production',
+    environment: process.env.NODE_ENV ?? 'development',
+  });
+  console.log('[worker] sentry initialized');
+}
 
 const conn = { connection: getRedis() };
 
@@ -33,6 +45,11 @@ for (const w of workers) {
   });
   w.on('failed', (job, err) => {
     console.error(`[worker] ${w.name} job ${job?.id} failed:`, err.message);
+    if (process.env.SENTRY_DSN) {
+      Sentry.captureException(err, {
+        tags: { queue: w.name, jobId: job?.id ?? 'unknown' },
+      });
+    }
   });
   w.on('completed', (job) => {
     console.log(`[worker] ${w.name} job ${job.id} ok`);
