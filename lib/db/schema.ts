@@ -104,3 +104,15 @@ export const scanCandidates = pgTable(
     pk: primaryKey({ columns: [table.scanId, table.symbol] }),
   }),
 );
+
+export const memberships = pgTable('memberships', {
+  userId: text('user_id')
+    .primaryKey()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  whopMembershipId: text('whop_membership_id'),
+  whopUserId: text('whop_user_id'),
+  status: text('status').notNull(), // 'active' | 'past_due' | 'canceled' | 'trialing' | 'expired'
+  plan: text('plan'),
+  currentPeriodEnd: timestamp('current_period_end', { mode: 'date', withTimezone: true }),
+  updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+});
