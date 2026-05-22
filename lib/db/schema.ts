@@ -162,3 +162,79 @@ export const watchlistSymbols = pgTable(
     symbolIdx: index('watchlist_symbols_symbol_idx').on(table.symbol),
   }),
 );
+
+export const alertRules = pgTable(
+  'alert_rules',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    active: boolean('active').notNull().default(true),
+    states: text('states').array().notNull(),
+    zones: text('zones').array().notNull(),
+    watchlistId: uuid('watchlist_id').references(() => watchlists.id, {
+      onDelete: 'set null',
+    }),
+    minScore: numeric('min_score').notNull().default('0'),
+    channels: text('channels').array().notNull(),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('alert_rules_user_id_idx').on(table.userId),
+  }),
+);
+
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    ruleId: uuid('rule_id').references(() => alertRules.id, {
+      onDelete: 'set null',
+    }),
+    scanId: uuid('scan_id').references(() => scans.id, { onDelete: 'cascade' }),
+    symbols: text('symbols').array().notNull(),
+    channel: text('channel').notNull(), // 'email' | 'webpush'
+    delivered: boolean('delivered').notNull().default(false),
+    error: text('error'),
+    sentAt: timestamp('sent_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('notifications_user_id_idx').on(table.userId),
+    sentAtIdx: index('notifications_sent_at_idx').on(table.sentAt),
+  }),
+);
+
+export const pushSubscriptions = pgTable(
+  'push_subscriptions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    endpoint: text('endpoint').notNull().unique(),
+    p256dh: text('p256dh').notNull(),
+    authKey: text('auth_key').notNull(),
+    userAgent: text('user_agent'),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('push_subscriptions_user_id_idx').on(table.userId),
+  }),
+);
