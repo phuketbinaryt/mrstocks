@@ -30,12 +30,20 @@ export default function Nav({ isSignedIn = false }: NavProps) {
           FAQ
         </a>
         {isSignedIn && (
-          <Link
-            href="/dashboard"
-            className="text-[oklch(0.82_0.16_75)] hover:text-white cursor-pointer"
-          >
-            MEMBERS
-          </Link>
+          <>
+            <Link
+              href="/dashboard"
+              className="text-[oklch(0.82_0.16_75)] hover:text-white cursor-pointer"
+            >
+              MEMBERS
+            </Link>
+            <Link
+              href="/watchlists"
+              className="text-[oklch(0.82_0.16_75)] hover:text-white cursor-pointer"
+            >
+              WATCHLISTS
+            </Link>
+          </>
         )}
       </nav>
 

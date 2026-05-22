@@ -70,6 +70,13 @@ export default function TopBar({
 
         <div className="flex items-center gap-1.5 ml-auto shrink-0">
           <Link
+            href="/watchlists"
+            aria-label="Watchlists"
+            className="hidden md:inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border border-white/15 text-[10.5px] uppercase tracking-[0.1em] text-white/75 hover:text-white hover:border-white/30"
+          >
+            WATCHLISTS
+          </Link>
+          <Link
             href="/history"
             aria-label="History"
             className="hidden md:inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border border-white/15 text-[10.5px] uppercase tracking-[0.1em] text-white/75 hover:text-white hover:border-white/30"
