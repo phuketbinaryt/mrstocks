@@ -5,6 +5,7 @@ import Features from '@/components/marketing/Features';
 import Pricing from '@/components/marketing/Pricing';
 import FAQ from '@/components/marketing/FAQ';
 import Footer from '@/components/marketing/Footer';
+import { env } from '@/lib/env';
 
 export default function HomePage() {
   return (
@@ -13,7 +14,7 @@ export default function HomePage() {
       <Hero />
       <HowItWorks />
       <Features />
-      <Pricing />
+      <Pricing checkoutUrl={env.WHOP_CHECKOUT_URL} />
       <FAQ />
       <Footer />
     </main>

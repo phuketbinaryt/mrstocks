@@ -1,6 +1,12 @@
 import { ArrowUpRight } from 'lucide-react';
 
-export default function Pricing() {
+export interface PricingProps {
+  /** Whop hosted checkout URL — passed in from a server component so we
+   *  don't import the server-only env from a client tree. */
+  checkoutUrl: string;
+}
+
+export default function Pricing({ checkoutUrl }: PricingProps) {
   const features = [
     'All US large-cap candidates · daily',
     'Unlimited watchlists',
@@ -41,18 +47,23 @@ export default function Pricing() {
         <div className="h-px bg-white/12 my-5" />
         <ul className="flex flex-col gap-2.5">
           {features.map((f) => (
-            <li key={f} className="flex items-start gap-2.5 text-[13px] text-white/85">
+            <li
+              key={f}
+              className="flex items-start gap-2.5 text-[13px] text-white/85"
+            >
               <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[oklch(0.78_0.16_150)] shadow-[0_0_4px_oklch(0.78_0.16_150)] shrink-0" />
               {f}
             </li>
           ))}
         </ul>
-        <button
-          type="button"
+        <a
+          href={checkoutUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="mt-6 w-full inline-flex items-center justify-center gap-2 px-3.5 py-3 rounded-sm border border-[oklch(0.82_0.16_75/0.6)] bg-[oklch(0.82_0.16_75/0.20)] text-[oklch(0.82_0.16_75)] text-[13px] uppercase tracking-[0.14em] hover:bg-[oklch(0.82_0.16_75/0.30)]"
         >
           SUBSCRIBE VIA WHOP <ArrowUpRight size={13} />
-        </button>
+        </a>
         <p className="text-center mt-3 text-[10px] uppercase tracking-[0.12em] text-white/45">
           SECURE CHECKOUT · CARDS · APPLE PAY · CRYPTO
         </p>
