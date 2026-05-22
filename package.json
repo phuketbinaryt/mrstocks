@@ -14,7 +14,9 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "worker:dev": "NODE_OPTIONS='--conditions=react-server' tsx watch worker/index.ts",
+    "worker:start": "NODE_OPTIONS='--conditions=react-server' tsx worker/index.ts"
   },
   "engines": {
     "node": ">=20.0.0",
