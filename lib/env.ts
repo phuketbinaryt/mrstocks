@@ -16,8 +16,16 @@ export const env = createEnv({
     WHOP_WEBHOOK_SECRET: z.string().min(16),
     WHOP_PASS_ID: z.string().min(1),
     WHOP_CHECKOUT_URL: z.string().url().startsWith('https://'),
+    VAPID_PUBLIC_KEY: z.string().min(40),
+    VAPID_PRIVATE_KEY: z.string().min(40),
+    VAPID_SUBJECT: z.union([
+      z.string().email(),
+      z.string().startsWith('mailto:'),
+    ]),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().min(40),
+  },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -32,6 +40,10 @@ export const env = createEnv({
     WHOP_WEBHOOK_SECRET: process.env.WHOP_WEBHOOK_SECRET,
     WHOP_PASS_ID: process.env.WHOP_PASS_ID,
     WHOP_CHECKOUT_URL: process.env.WHOP_CHECKOUT_URL,
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+    VAPID_SUBJECT: process.env.VAPID_SUBJECT,
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
   },
   emptyStringAsUndefined: true,
 });
