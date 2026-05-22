@@ -84,7 +84,7 @@ export default function TopBar({
             HISTORY
           </Link>
           <Link
-            href="/settings"
+            href="/alerts"
             aria-label="Alerts"
             className="relative p-1.5 rounded-sm text-white/75 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/15"
           >
