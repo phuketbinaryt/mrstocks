@@ -54,6 +54,21 @@ jobs:
 
       - run: pnpm db:migrate
 
-      - run: pnpm test:integration
-
       - run: pnpm build
+
+      - name: Start Next.js server (background)
+        run: pnpm start &
+
+      - name: Wait for server
+        run: |
+          for i in {1..40}; do
+            if curl -sS http://127.0.0.1:3200/api/ingest/scan > /dev/null; then
+              echo "server is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server failed to start"
+          exit 1
+
+      - run: pnpm test:integration
