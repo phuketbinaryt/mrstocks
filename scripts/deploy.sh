@@ -31,3 +31,8 @@ echo "[deploy] restarting systemd service (sudo)"
 sudo /bin/systemctl restart mrstocks
 sleep 2
 sudo /bin/systemctl status mrstocks --no-pager | head -10
+
+echo "[deploy] restarting worker"
+sudo /bin/systemctl restart mrstocks-worker || echo "[deploy] worker not installed yet, skipping"
+sleep 1
+sudo /bin/systemctl status mrstocks-worker --no-pager 2>/dev/null | head -10 || true
