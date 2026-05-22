@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/client';
 import { users, accounts, sessions, verificationTokens } from '@/lib/db/schema';
 import { env } from '@/lib/env';
@@ -116,6 +117,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             err,
           );
           // Non-fatal — user can create one manually from /watchlists/new.
+        }
+      }
+
+      // Admin bootstrap: if ADMIN_BOOTSTRAP_EMAIL is set and matches this
+      // user's email, flip is_admin=true. Idempotent — safe to run every
+      // sign-in. Lets the orchestrator (or a new co-founder) self-promote
+      // without a manual UPDATE on the prod DB.
+      const bootstrapEmail = env.ADMIN_BOOTSTRAP_EMAIL;
+      if (
+        bootstrapEmail &&
+        user.id &&
+        user.email &&
+        user.email.toLowerCase() === bootstrapEmail.toLowerCase()
+      ) {
+        try {
+          await db
+            .update(users)
+            .set({ isAdmin: true })
+            .where(eq(users.id, user.id));
+        } catch (err) {
+          console.error('[auth.signIn] admin bootstrap failed:', err);
         }
       }
     },

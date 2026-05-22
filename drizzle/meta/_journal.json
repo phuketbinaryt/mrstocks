@@ -36,6 +36,13 @@
       "when": 1779479436846,
       "tag": "0004_red_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779481194162,
+      "tag": "0005_curious_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

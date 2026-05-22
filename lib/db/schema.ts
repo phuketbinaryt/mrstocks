@@ -22,6 +22,7 @@ export const users = pgTable('users', {
   email: text('email').unique().notNull(),
   emailVerified: timestamp('email_verified', { mode: 'date' }),
   image: text('image'),
+  isAdmin: boolean('is_admin').notNull().default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -214,6 +215,28 @@ export const notifications = pgTable(
   (table) => ({
     userIdIdx: index('notifications_user_id_idx').on(table.userId),
     sentAtIdx: index('notifications_sent_at_idx').on(table.sentAt),
+  }),
+);
+
+export const auditLog = pgTable(
+  'audit_log',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    actorUserId: text('actor_user_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    action: text('action').notNull(),
+    target: text('target'),
+    meta: jsonb('meta'),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    actionIdx: index('audit_log_action_idx').on(table.action),
+    createdAtIdx: index('audit_log_created_at_idx').on(table.createdAt),
   }),
 );
 

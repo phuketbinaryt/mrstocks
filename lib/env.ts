@@ -22,9 +22,18 @@ export const env = createEnv({
       z.string().email(),
       z.string().startsWith('mailto:'),
     ]),
+    // Optional. If set, the user with this email is auto-promoted to
+    // is_admin=true on next sign-in. Useful for bootstrapping the first
+    // admin without a manual UPDATE on the prod DB.
+    ADMIN_BOOTSTRAP_EMAIL: z.string().email().optional(),
+    // Optional. If set, Sentry SDK initializes server-side; otherwise it's
+    // a noop and the app continues to work without error reporting.
+    SENTRY_DSN: z.string().url().optional(),
   },
   client: {
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().min(40),
+    // Optional. Mirrors SENTRY_DSN for browser-side error capture.
+    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -43,7 +52,10 @@ export const env = createEnv({
     VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     VAPID_SUBJECT: process.env.VAPID_SUBJECT,
+    ADMIN_BOOTSTRAP_EMAIL: process.env.ADMIN_BOOTSTRAP_EMAIL,
+    SENTRY_DSN: process.env.SENTRY_DSN,
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
   emptyStringAsUndefined: true,
 });
