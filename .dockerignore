@@ -1,0 +1,15 @@
+node_modules
+.next
+.env
+.env.local
+.env*.local
+.git
+.github
+Dockerfile
+docker-compose*.yml
+README.md
+tests
+coverage
+design_handoff_mrstocks
+*.md
+MrStocks.zip
