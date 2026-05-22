@@ -1,8 +1,8 @@
 'use client';
-// Dashboard interactivity shell. Owns the filter state (STATE chip + PRIOR45
-// chip) and filters the rows in memory — the full scan is ~500 candidates,
-// no extra requests needed. Receives already-projected DashboardCandidate
-// rows from the server component.
+// Dashboard interactivity shell. Owns the filter state (STATE chip +
+// PRIOR45 chip + LIST chip) and filters the rows in memory — the full
+// scan is ~500 candidates, no extra requests needed. Receives already-
+// projected DashboardCandidate rows from the server component.
 import { useMemo, useState } from 'react';
 import FilterRow from '@/components/dashboard/FilterRow';
 import StockCard from '@/components/dashboard/StockCard';
@@ -11,11 +11,20 @@ import TopBar from '@/components/dashboard/TopBar';
 import { STATE_FILTERS, ZONE_FILTERS } from '@/lib/scans/filters-config';
 import type { DashboardCandidate } from '@/lib/scans/candidate-types';
 
+export interface DashboardListChip {
+  id: string;
+  name: string;
+  isDefault: boolean;
+}
+
 export interface DashboardClientProps {
   generatedAtISO: string;
   universeSize: number | null;
   barSeconds: number | null;
   candidates: DashboardCandidate[];
+  lists: DashboardListChip[];
+  symbolsByList: Record<string, string[]>;
+  defaultListId: string | null;
 }
 
 // Match a filter id like "upper_1" against a Prior45 position string
@@ -39,18 +48,37 @@ export default function DashboardClient({
   universeSize,
   barSeconds,
   candidates,
+  lists,
+  symbolsByList,
+  defaultListId,
 }: DashboardClientProps) {
   const generatedAt = new Date(generatedAtISO);
   const [state, setState] = useState<string>('all');
   const [zone, setZone] = useState<string>('all');
+  // Default list chip is the user's default if set; otherwise "All signals".
+  const [list, setList] = useState<string>(defaultListId ?? 'all');
 
   const filtered = useMemo(() => {
+    const listSet =
+      list === 'all' ? null : new Set(symbolsByList[list] ?? []);
     return candidates.filter((c) => {
       if (state !== 'all' && c.state !== state) return false;
       if (!zoneMatches(zone, c.prior45Position)) return false;
+      if (listSet && !listSet.has(c.symbol)) return false;
       return true;
     });
-  }, [candidates, state, zone]);
+  }, [candidates, state, zone, list, symbolsByList]);
+
+  const listChips = useMemo(
+    () => [
+      { id: 'all', label: 'All signals' },
+      ...lists.map((l) => ({
+        id: l.id,
+        label: l.isDefault ? `${l.name} ★` : l.name,
+      })),
+    ],
+    [lists],
+  );
 
   return (
     <main className="min-h-screen flex flex-col bg-black text-white">
@@ -66,6 +94,12 @@ export default function DashboardClient({
         chips={ZONE_FILTERS}
         activeId={zone}
         onChange={setZone}
+      />
+      <FilterRow
+        label="LIST"
+        chips={listChips}
+        activeId={list}
+        onChange={setList}
       />
       <section className="flex-1 px-3 md:px-5 py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {filtered.length === 0 ? (
