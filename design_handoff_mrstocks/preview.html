@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MrStocks — Design Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: {
+          sans: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+          mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        },
+      } },
+    };
+  </script>
+
+  <style>
+    html, body { background: #000; color: #fff; font-family: 'IBM Plex Mono', ui-monospace, monospace; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; margin: 0; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { scrollbar-width: none; }
+    .frame { box-shadow: 0 0 0 1px rgba(255,255,255,0.10); }
+    .preview-rail { position: fixed; top: 0; left: 0; bottom: 0; width: 220px; background: #050505; border-right: 1px solid rgba(255,255,255,0.12); overflow-y: auto; z-index: 50; }
+    .preview-rail h2 { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.82 0.16 75); padding: 12px 16px 6px; }
+    .preview-rail a { display: block; padding: 6px 16px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255,255,255,0.75); border-left: 2px solid transparent; cursor: pointer; }
+    .preview-rail a:hover { color: #fff; background: rgba(255,255,255,0.04); border-left-color: oklch(0.82 0.16 75 / 0.5); }
+    .preview-stage { margin-left: 220px; padding: 24px; }
+    .preview-stage h1 { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.82 0.16 75); margin: 24px 0 12px; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="components/ms-data.jsx"></script>
+  <script type="text/babel" src="components/ms-icons.jsx"></script>
+  <script type="text/babel" src="components/ms-dashboard.jsx"></script>
+  <script type="text/babel" src="components/ms-symbol.jsx"></script>
+  <script type="text/babel" src="components/ms-watchlists.jsx"></script>
+  <script type="text/babel" src="components/ms-alerts.jsx"></script>
+  <script type="text/babel" src="components/ms-history.jsx"></script>
+  <script type="text/babel" src="components/ms-settings.jsx"></script>
+  <script type="text/babel" src="components/ms-marketing-fx.jsx"></script>
+  <script type="text/babel" src="components/ms-marketing.jsx"></script>
+  <script type="text/babel" src="components/ms-states.jsx"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="env,react">
+    const SCREENS = [
+      { id: 'dashboard',         label: '01 Dashboard',              W: 1280, H: 900,  render: () => <Dashboard variant="default" layout="desktop" /> },
+      { id: 'dashboard_mobile',  label: '01 Dashboard · mobile',     W: 375,  H: 812,  render: () => <Dashboard variant="default" layout="mobile" /> },
+      { id: 'symbol',            label: '02 Symbol · NVDA',          W: 1280, H: 900,  render: () => <SymbolDetail symbol="NVDA" layout="desktop" /> },
+      { id: 'symbol_mobile',     label: '02 Symbol · mobile',        W: 375,  H: 1080, render: () => <SymbolDetail symbol="NVDA" layout="mobile" /> },
+      { id: 'watchlists',        label: '03 Watchlists',             W: 1280, H: 780,  render: () => <WatchlistsList layout="desktop" /> },
+      { id: 'watchlist_detail',  label: '03 Watchlist · detail',     W: 1280, H: 1000, render: () => <WatchlistDetail id="tech_leaders" layout="desktop" /> },
+      { id: 'alerts',            label: '04 Alerts · list',          W: 1280, H: 760,  render: () => <AlertsList layout="desktop" /> },
+      { id: 'alerts_new',        label: '04 Alerts · new rule',      W: 1280, H: 900,  render: () => <AlertEditor layout="desktop" /> },
+      { id: 'history',           label: '05 History',                W: 1280, H: 900,  render: () => <HistoryView layout="desktop" /> },
+      { id: 'history_day',       label: '05 History · day archive',  W: 1280, H: 900,  render: () => <HistoryView variant="detail" layout="desktop" /> },
+      { id: 'settings',          label: '06 Settings',               W: 1280, H: 1100, render: () => <SettingsView layout="desktop" /> },
+      { id: 'marketing',         label: '07 Marketing landing',      W: 1280, H: 4200, render: () => <MarketingPage layout="desktop" /> },
+      { id: 'marketing_mobile',  label: '07 Marketing · mobile',     W: 375,  H: 3800, render: () => <MarketingPage layout="mobile" /> },
+      { id: 'states',            label: '08 Empty / error states',   W: 1280, H: 1500, render: () => <StatesGallery layout="desktop" /> },
+    ];
+
+    function App() {
+      const initial = (location.hash || '#dashboard').replace('#','');
+      const [active, setActive] = React.useState(SCREENS.find((s) => s.id === initial)?.id || SCREENS[0].id);
+      React.useEffect(() => { location.hash = active; }, [active]);
+      const screen = SCREENS.find((s) => s.id === active);
+      return (
+        <>
+          <aside className="preview-rail">
+            <h2>MR/STOCKS · Preview</h2>
+            {SCREENS.map((s) => (
+              <a key={s.id}
+                onClick={() => setActive(s.id)}
+                style={active === s.id ? { color:'#fff', background:'oklch(0.82 0.16 75 / 0.10)', borderLeftColor:'oklch(0.82 0.16 75)' } : null}
+              >{s.label}</a>
+            ))}
+            <h2 style={{ marginTop: 24 }}>About</h2>
+            <div style={{ padding:'0 16px 16px', fontSize:11, lineHeight:1.6, color:'rgba(255,255,255,0.55)' }}>
+              Click a screen to render. This is the design reference — see README.md for implementation guidance.
+            </div>
+          </aside>
+
+          <main className="preview-stage">
+            <h1>{screen.label} · {screen.W}×{screen.H}</h1>
+            <div className="frame" style={{ width: screen.W, height: screen.H, overflow: 'hidden' }}>
+              {screen.render()}
+            </div>
+          </main>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

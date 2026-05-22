@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+*.tsbuildinfo
+.env
+.env.local
+.env*.local
+.DS_Store
+*.log
+.turbo
+coverage
+.pnpm-store
+
+# design handoff (reference material, kept locally but not built/lint-scanned)
+# - tracked in git via explicit `git add`, ignored by Next's TS/lint scanners via tsconfig "exclude"
