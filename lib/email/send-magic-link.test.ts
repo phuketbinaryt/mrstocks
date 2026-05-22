@@ -26,6 +26,10 @@ describe('sendMagicLinkEmail', () => {
     process.env.WHOP_WEBHOOK_SECRET = 'x'.repeat(32);
     process.env.WHOP_PASS_ID = 'pass_test';
     process.env.WHOP_CHECKOUT_URL = 'https://whop.com/checkout/test';
+    process.env.VAPID_PUBLIC_KEY = 'B' + 'x'.repeat(86);
+    process.env.VAPID_PRIVATE_KEY = 'x'.repeat(43);
+    process.env.VAPID_SUBJECT = 'mailto:ops@example.com';
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY = 'B' + 'x'.repeat(86);
   });
 
   it('calls Resend with the magic link URL and recipient', async () => {
