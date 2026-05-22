@@ -1,0 +1,22 @@
+[Unit]
+Description=MrStocks BullMQ worker
+After=network.target redis-server.service postgresql.service mrstocks.service
+Wants=redis-server.service postgresql.service
+
+[Service]
+Type=simple
+User=mrstocks
+Group=mrstocks
+WorkingDirectory=/opt/mrstocks
+EnvironmentFile=/opt/mrstocks/.env.local
+# pnpm worker:start sets NODE_OPTIONS=--conditions=react-server so that
+# 'server-only' imports in lib/db/client.ts + lib/queue/* resolve to the
+# Next.js empty no-op and the worker can import the same modules the web
+# app uses.
+ExecStart=/usr/bin/env pnpm worker:start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

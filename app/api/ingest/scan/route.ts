@@ -3,6 +3,7 @@ import { env } from '@/lib/env';
 import { verifyHmac } from '@/lib/ingest/verify-hmac';
 import { scanPayloadSchema } from '@/lib/ingest/schema';
 import { saveScan } from '@/lib/ingest/save-scan';
+import { getEvaluateAlertsQueue } from '@/lib/queue/queues';
 
 // Node runtime (Drizzle + crypto + postgres.js don't work on Edge).
 export const runtime = 'nodejs';
@@ -38,6 +39,28 @@ export async function POST(req: NextRequest) {
   // 5. Save (idempotent).
   try {
     const saved = await saveScan(result.data);
+
+    // 6. Best-effort: enqueue alert fan-out. Only fire on a fresh insert —
+    // replays would re-spam every member. Failures here are NEVER fatal:
+    // the ingest endpoint's contract is "scan saved", not "alerts dispatched".
+    if (saved.status === 'created') {
+      try {
+        await getEvaluateAlertsQueue().add(
+          'evaluate',
+          { scanId: saved.scanId },
+          {
+            removeOnComplete: 100,
+            removeOnFail: 100,
+            attempts: 3,
+            backoff: { type: 'exponential', delay: 5000 },
+          },
+        );
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error('[ingest/scan] enqueue evaluate-alerts failed:', message);
+      }
+    }
+
     return NextResponse.json(saved, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'unknown';

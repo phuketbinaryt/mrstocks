@@ -23,6 +23,15 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     env:
       DATABASE_URL: postgres://scanner:scanner@localhost:5433/scanner
@@ -30,6 +39,7 @@ jobs:
       AUTH_URL: http://localhost:3200
       RESEND_API_KEY: re_test_ci
       EMAIL_FROM: noreply@example.com
+      REDIS_URL: redis://localhost:6380
       INGEST_SHARED_SECRET: "0000000000000000000000000000000000000000000000000000000000000000"
       WHOP_CLIENT_ID: ci_test
       WHOP_CLIENT_SECRET: ci_test
@@ -37,6 +47,12 @@ jobs:
       WHOP_WEBHOOK_SECRET: "0000000000000000000000000000000000000000000000000000000000000000"
       WHOP_PASS_ID: pass_test
       WHOP_CHECKOUT_URL: https://whop.com/checkout/test
+      # VAPID values are fake — only used so env validation + Next build pass.
+      # Production keys live in /opt/mrstocks/.env.local on the prod box.
+      VAPID_PUBLIC_KEY: "BFakeVapidPublicKeyForCIPurposesOnly_64chars_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      VAPID_PRIVATE_KEY: "fakeVapidPrivateKey_43chars_xxxxxxxxxxxxxxxxxxxx"
+      VAPID_SUBJECT: "mailto:ci@example.com"
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY: "BFakeVapidPublicKeyForCIPurposesOnly_64chars_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
     steps:
       - uses: actions/checkout@v4

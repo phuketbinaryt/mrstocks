@@ -4,7 +4,9 @@ import { db } from '@/lib/db/client';
 import { memberships } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { signOut } from '@/lib/auth';
+import { env } from '@/lib/env';
 import TopBar from '@/components/dashboard/TopBar';
+import PushEnableButton from '@/components/settings/PushEnableButton';
 
 export const metadata = { title: 'Settings — MR/STOCKS' };
 export const dynamic = 'force-dynamic';
@@ -111,6 +113,30 @@ export default async function SettingsPage() {
                 MANAGE BILLING <ArrowUpRight size={11} />
               </a>
             </div>
+          </section>
+
+          {/* 03 NOTIFICATIONS */}
+          <section className="border border-white/12 rounded-sm bg-[#0B0B0B] p-5">
+            <div className="flex items-baseline gap-2.5 mb-4">
+              <span className="text-[9.5px] uppercase tracking-[0.15em] text-[oklch(0.82_0.16_75)]">
+                03
+              </span>
+              <h2 className="text-[12px] text-white uppercase tracking-[0.12em] font-medium">
+                Notifications
+              </h2>
+            </div>
+            <PushEnableButton
+              publicKey={env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? ''}
+            />
+            <p className="text-[10.5px] uppercase tracking-[0.08em] text-white/45 mt-2">
+              MANAGE PER-RULE CHANNELS AT{' '}
+              <a
+                href="/alerts"
+                className="text-[oklch(0.82_0.16_75)] hover:underline"
+              >
+                /ALERTS
+              </a>
+            </p>
           </section>
 
           {/* Bottom action row */}
