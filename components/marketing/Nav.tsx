@@ -51,20 +51,31 @@ export default function Nav({ isSignedIn = false }: NavProps) {
 
       <div className="hidden md:flex items-center gap-3">
         <LivePill />
-        <Link
-          href="/signin"
-          className="text-[11px] uppercase tracking-[0.1em] text-white/75 hover:text-white"
-        >
-          SIGN IN
-        </Link>
+        {!isSignedIn && (
+          <Link
+            href="/signin"
+            className="text-[11px] uppercase tracking-[0.1em] text-white/75 hover:text-white"
+          >
+            SIGN IN
+          </Link>
+        )}
       </div>
 
-      <Link
-        href="/pricing"
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-sm border border-[oklch(0.82_0.16_75/0.55)] bg-[oklch(0.82_0.16_75/0.14)] text-[oklch(0.82_0.16_75)] text-[11px] uppercase tracking-[0.12em] hover:bg-[oklch(0.82_0.16_75/0.22)] whitespace-nowrap"
-      >
-        SUBSCRIBE
-      </Link>
+      {isSignedIn ? (
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-sm border border-[oklch(0.82_0.16_75/0.55)] bg-[oklch(0.82_0.16_75/0.14)] text-[oklch(0.82_0.16_75)] text-[11px] uppercase tracking-[0.12em] hover:bg-[oklch(0.82_0.16_75/0.22)] whitespace-nowrap"
+        >
+          OPEN DASHBOARD &rarr;
+        </Link>
+      ) : (
+        <Link
+          href="/pricing"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-sm border border-[oklch(0.82_0.16_75/0.55)] bg-[oklch(0.82_0.16_75/0.14)] text-[oklch(0.82_0.16_75)] text-[11px] uppercase tracking-[0.12em] hover:bg-[oklch(0.82_0.16_75/0.22)] whitespace-nowrap"
+        >
+          SUBSCRIBE
+        </Link>
+      )}
 
       <button
         aria-label="Menu"

@@ -102,25 +102,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      // Bootstrap a default watchlist for new users (idempotent — no-op if
-      // they already have one). Runs for every provider so magic-link
-      // users also get an "All signals" list on first sign-in.
-      if (user.id) {
-        try {
-          const { ensureDefaultWatchlistForUser } = await import(
-            '@/lib/watchlists/actions'
-          );
-          await ensureDefaultWatchlistForUser(user.id);
-        } catch (err) {
-          console.error(
-            '[auth.signIn] ensureDefaultWatchlist failed:',
-            err,
-          );
-          // Non-fatal — user can create one manually from /watchlists/new.
-        }
-      }
-
-      // Admin bootstrap: if ADMIN_BOOTSTRAP_EMAIL is set and matches this
+// Admin bootstrap: if ADMIN_BOOTSTRAP_EMAIL is set and matches this
       // user's email, flip is_admin=true. Idempotent — safe to run every
       // sign-in. Lets the orchestrator (or a new co-founder) self-promote
       // without a manual UPDATE on the prod DB.

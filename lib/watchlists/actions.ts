@@ -142,16 +142,14 @@ export async function removeSymbol(
  * "you have no watchlists" empty state by default. Idempotent — a no-op if
  * the user already has any watchlist row.
  */
+/**
+ * @deprecated No longer called from events.signIn — auto-creating an empty
+ * "All signals" watchlist was confusing because the LIST chip row already
+ * includes an "All signals" (no-filter) option, so users saw the name twice.
+ * Kept for backward compatibility / tests; safe to remove once nothing imports.
+ */
 export async function ensureDefaultWatchlistForUser(
-  userId: string,
+  _userId: string,
 ): Promise<void> {
-  const [existing] = await db
-    .select({ id: watchlists.id })
-    .from(watchlists)
-    .where(eq(watchlists.userId, userId))
-    .limit(1);
-  if (existing) return;
-  await db
-    .insert(watchlists)
-    .values({ userId, name: 'All signals', isDefault: true });
+  // intentionally no-op
 }

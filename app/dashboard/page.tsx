@@ -54,8 +54,6 @@ export default async function DashboardPage() {
       (symbolsByList[row.watchlistId] ??= []).push(row.symbol);
     }
   }
-  const defaultListId = lists.find((l) => l.isDefault)?.id ?? null;
-
   return (
     <DashboardClient
       generatedAtISO={scan.generatedAt.toISOString()}
@@ -68,7 +66,6 @@ export default async function DashboardPage() {
         isDefault: l.isDefault,
       }))}
       symbolsByList={symbolsByList}
-      defaultListId={defaultListId}
     />
   );
 }

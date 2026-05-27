@@ -24,7 +24,6 @@ export interface DashboardClientProps {
   candidates: DashboardCandidate[];
   lists: DashboardListChip[];
   symbolsByList: Record<string, string[]>;
-  defaultListId: string | null;
 }
 
 // Match a filter id like "upper_1" against a Prior45 position string
@@ -50,13 +49,15 @@ export default function DashboardClient({
   candidates,
   lists,
   symbolsByList,
-  defaultListId,
 }: DashboardClientProps) {
   const generatedAt = new Date(generatedAtISO);
   const [state, setState] = useState<string>('all');
   const [zone, setZone] = useState<string>('all');
-  // Default list chip is the user's default if set; otherwise "All signals".
-  const [list, setList] = useState<string>(defaultListId ?? 'all');
+  // Always open the dashboard with "All signals" (no filter) regardless of
+  // which watchlist the user has marked default — pre-Phase-4-revision used
+  // to auto-select the default and that hid candidates surprisingly. Users
+  // who want a list pick it from the LIST chip row themselves.
+  const [list, setList] = useState<string>('all');
 
   const filtered = useMemo(() => {
     const listSet =

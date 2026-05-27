@@ -43,7 +43,7 @@ export default function TopBar({
       style={{ borderBottomColor: 'oklch(0.82 0.16 75 / 0.55)' }}
     >
       <div className="flex items-center gap-3 px-3 md:px-5 h-11 md:h-12">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
+        <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
           <Logo size={16} />
           <span className="hidden md:inline text-[11px] tracking-[0.22em] uppercase text-[oklch(0.82_0.16_75)] font-medium">
             MR/STOCKS
@@ -69,6 +69,13 @@ export default function TopBar({
         </div>
 
         <div className="flex items-center gap-1.5 ml-auto shrink-0">
+          <Link
+            href="/dashboard"
+            aria-label="Dashboard"
+            className="hidden md:inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border border-white/15 text-[10.5px] uppercase tracking-[0.1em] text-white/75 hover:text-white hover:border-white/30"
+          >
+            DASHBOARD
+          </Link>
           <Link
             href="/watchlists"
             aria-label="Watchlists"
