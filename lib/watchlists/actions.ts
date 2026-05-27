@@ -34,6 +34,46 @@ export async function createWatchlist(formData: FormData): Promise<void> {
   redirect(`/watchlists/${created.id}`);
 }
 
+/**
+ * Atomic: create a watchlist with a name AND add the given symbol to it in
+ * one transaction. Used from the dashboard's "add to watchlist → NEW LIST"
+ * flow. Returns the new watchlist's id so the caller can navigate or refresh.
+ */
+export async function createWatchlistAndAddSymbol(
+  name: string,
+  symbol: string,
+): Promise<{ id: string }> {
+  const userId = await userIdOrThrow();
+  const cleanName = name.trim();
+  if (!cleanName || cleanName.length > 40)
+    throw new Error('name must be 1-40 characters');
+  const sym = symbol.trim().toUpperCase();
+  if (!/^[A-Z]{1,8}$/.test(sym)) throw new Error('invalid symbol');
+
+  const id = await db.transaction(async (tx) => {
+    const existing = await tx
+      .select({ count: sql<number>`COUNT(*)::int` })
+      .from(watchlists)
+      .where(eq(watchlists.userId, userId));
+    const isFirst = (existing[0]?.count ?? 0) === 0;
+
+    const [created] = await tx
+      .insert(watchlists)
+      .values({ userId, name: cleanName, isDefault: isFirst })
+      .returning({ id: watchlists.id });
+
+    await tx.insert(watchlistSymbols).values({
+      watchlistId: created.id,
+      symbol: sym,
+    });
+    return created.id;
+  });
+
+  revalidatePath('/watchlists');
+  revalidatePath('/dashboard');
+  return { id };
+}
+
 export async function renameWatchlist(
   id: string,
   name: string,

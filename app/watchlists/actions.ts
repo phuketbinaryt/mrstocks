@@ -2,6 +2,7 @@
 // standard app/ path without leaking the 'server-only' boundary.
 export {
   createWatchlist,
+  createWatchlistAndAddSymbol,
   renameWatchlist,
   deleteWatchlist,
   setDefaultWatchlist,

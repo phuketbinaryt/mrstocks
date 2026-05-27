@@ -108,7 +108,14 @@ export default function DashboardClient({
             No candidates match these filters.
           </div>
         ) : (
-          filtered.map((c) => <StockCard key={c.symbol} candidate={c} />)
+          filtered.map((c) => (
+            <StockCard
+              key={c.symbol}
+              candidate={c}
+              lists={lists.map((l) => ({ id: l.id, name: l.name }))}
+              symbolsByList={symbolsByList}
+            />
+          ))
         )}
       </section>
       <StatusBar
