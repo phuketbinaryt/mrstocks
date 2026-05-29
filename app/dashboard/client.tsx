@@ -89,18 +89,24 @@ export default function DashboardClient({
         chips={STATE_FILTERS}
         activeId={state}
         onChange={setState}
+        helpHref="/education/states-explained"
+        helpBody="The setup state — one of six. NARROW is the primary coil. Filter to the states you trade."
       />
       <FilterRow
         label="PRIOR45"
         chips={ZONE_FILTERS}
         activeId={zone}
         onChange={setZone}
+        helpHref="/education/prior45-zones"
+        helpBody="Where price sits in the Prior45 band: Inside, Upper #1–3, or Lower #1–3. Zone changes the play."
       />
       <FilterRow
         label="LIST"
         chips={listChips}
         activeId={list}
         onChange={setList}
+        helpHref="/education/the-daily-flow"
+        helpBody="Restrict the scan to one of your watchlists. See the daily flow for how to work the morning loop."
       />
       <section className="flex-1 px-3 md:px-5 py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {filtered.length === 0 ? (

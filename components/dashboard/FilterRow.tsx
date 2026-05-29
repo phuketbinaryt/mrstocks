@@ -4,12 +4,17 @@
 // horizontally-scrollable chip strip with a 58px-wide amber label gutter.
 import { STATES } from '@/lib/scans/state-config';
 import type { FilterChip } from '@/lib/scans/filters-config';
+import HelpDot from './HelpDot';
 
 export interface FilterRowProps {
   label: string;
   chips: FilterChip[];
   activeId: string;
   onChange: (id: string) => void;
+  /** When both are present, a HelpDot is shown next to the row label,
+   *  deep-linking to an education article. */
+  helpHref?: string;
+  helpBody?: string;
 }
 
 export default function FilterRow({
@@ -17,11 +22,16 @@ export default function FilterRow({
   chips,
   activeId,
   onChange,
+  helpHref,
+  helpBody,
 }: FilterRowProps) {
   return (
     <div className="flex items-center gap-2 px-3 md:px-5 py-2 border-b border-white/10">
-      <span className="w-[58px] shrink-0 text-[9.5px] uppercase tracking-[0.18em] text-[oklch(0.82_0.16_75)]">
+      <span className="w-[58px] shrink-0 inline-flex items-center gap-1 text-[9.5px] uppercase tracking-[0.18em] text-[oklch(0.82_0.16_75)]">
         {label}
+        {helpHref && helpBody && (
+          <HelpDot label={label} body={helpBody} href={helpHref} />
+        )}
       </span>
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
         {chips.map((c) => {
