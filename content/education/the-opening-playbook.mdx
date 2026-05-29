@@ -1,0 +1,50 @@
+---
+title: The opening playbook
+slug: the-opening-playbook
+category: Strategy
+order: 8
+draft: false
+updated: 2026-05-30
+---
+
+# The opening playbook
+
+<Callout tone="caution">
+Draft — pending trader review. The mechanics below are derived directly from the scanner logic and README; confirm the discretionary nuances with the desk.
+</Callout>
+
+The scanner gives you a pre-open picture and a conditional bias. The **opening playbook** is the rule set that turns that bias into a trade, anchored to the **first regular-session 2-minute candle**.
+
+## The trigger candle
+
+The scanner runs pre-open (≈09:15 NY) and freezes the **previous RTH session's** state. The entry decision waits for the **first regular-session 2-minute candle**:
+
+- **Long** only if that candle **opens above both MAs**.
+- **Short** only if that candle **opens below both MAs**.
+
+If the open doesn't satisfy the side your watch label expected, there is no trade. The bias was conditional; the open is the condition.
+
+## Entry, stop, target
+
+Once the first 2-minute candle defines the side:
+
+- **Entry** — 1 cent beyond the first candle's **high** (long) or **low** (short).
+- **Stop** — 1 cent beyond the **opposite** side of that same first candle.
+- **Target** — **1R** by default (one multiple of the entry-to-stop risk).
+- **Max hold** — **12 bars**. If the target hasn't filled by then, the trade comes off.
+
+A more transcript-faithful variant additionally requires the **first candle's color to agree** with the trade direction (green for long, red for short).
+
+## Worked reads
+
+A NARROW name sitting just above the cluster comes in biased long:
+
+<AnnotatedCard />
+
+This card's watch label is `LONG · ABOVE CLUSTER`. The long goes live **only if** the first 2-minute candle opens above both MAs. Entry is 1¢ above that candle's high, stop is 1¢ below its low, target is 1R, max hold 12 bars.
+
+For a NARROW name that the scanner couldn't assign a side (the `WAIT_FOR_OPEN_LOCATION` case), you simply let the open tell you the side first, then apply the same entry/stop/target rules.
+
+## The mindset
+
+The scanner is **advisory**: it surfaces the pre-open picture, and the actual entry always needs the opening event to confirm. You are not predicting the break — you are reacting to it within a tightly defined first-candle structure.

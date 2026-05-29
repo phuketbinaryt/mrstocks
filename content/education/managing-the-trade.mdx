@@ -1,0 +1,36 @@
+---
+title: Managing the trade
+slug: managing-the-trade
+category: Strategy
+order: 9
+draft: false
+updated: 2026-05-30
+---
+
+# Managing the trade
+
+<Callout tone="caution">
+Draft — pending trader review. The rules below are exactly those documented in the scanner logic; position-sizing and scaling are deliberately left out because they are not specified there. Confirm the discretionary nuances with the desk.
+</Callout>
+
+Once the opening trigger has you in, management is simple by design — the rules are fixed up front so there are no mid-trade decisions to second-guess.
+
+## Where the stop sits
+
+The stop is placed at the entry: **1 cent beyond the opposite side of the first 2-minute candle**. For a long, that's 1¢ below the first candle's low; for a short, 1¢ above its high. The first candle defines both your entry and your risk, so your **R** (risk unit) is the distance from entry to that stop.
+
+## The target
+
+The default target is **1R** — one multiple of that entry-to-stop distance. The trade is sized in R, not in fixed dollar amounts, so a tighter first candle means a tighter stop and a closer 1R target.
+
+## The 12-bar max hold
+
+If price hasn't reached the 1R target, the trade does **not** sit open indefinitely. There is a **12-bar maximum hold**: after 12 bars, the position comes off regardless of where it is. This caps time-in-trade and stops a stalled opening setup from drifting into the middle of the session.
+
+## The color-agreement variant
+
+The more transcript-faithful variant adds one condition at entry: the **first candle's color must agree with the trade direction** — green for a long, red for a short. It's a stricter filter on which opening triggers you act on; it doesn't change the stop, target, or max-hold once you're in.
+
+<Callout tone="info">
+The documented rule set is: entry 1¢ beyond the first-candle extreme, stop 1¢ beyond the opposite extreme, 1R target, 12-bar max hold, optional color agreement. Anything beyond that — scaling, trailing, partial exits, position sizing — is not part of the scanner's spec and is left to your own risk management.
+</Callout>

@@ -1,0 +1,40 @@
+---
+title: What not to trade
+slug: what-not-to-trade
+category: Strategy
+order: 10
+draft: false
+updated: 2026-05-30
+---
+
+# What not to trade
+
+<Callout tone="caution">
+Draft — pending trader review. These exclusions follow from the scanner's state and zone logic; confirm the discretionary nuances with the desk.
+</Callout>
+
+As much of the edge is in what you skip as in what you take. The scanner surfaces ~500 names a day; most of them are not trades. Here's what to pass on.
+
+## TOO TIGHT — no expansion yet
+
+A TOO TIGHT name has its MA gap `< 0.05 ATR` and `< 0.01%` — the moving averages are essentially stacked. There is no expansion structure to trade. `state_score` is 30 for a reason. Leave it; it may compress into something, but right now there's nothing to lean on.
+
+## MIDDLE — undefined structure
+
+A MIDDLE name is "not narrow or wide enough" — `state_score` 20. It isn't coiled and it isn't stretched. It's on the dashboard because liquidity or location nudged its score, not because the structure is tradeable. Treat MIDDLE as information, not a setup.
+
+## Zone #3 — reversal-only, not continuation
+
+When a name is in a **#3 zone** (2×+ stretched), the action label is explicit: `HIGH_3_SHORT_REVERSAL_ONLY` or `LOW_3_LONG_REVERSAL_ONLY`. Do **not** take continuation here. The higher-odds trade at an extreme is back toward the band, never further into the stretch.
+
+## Stretched names you'd be chasing late
+
+A WIDE SNAPBACK name is `≥ 1.50 ATR` apart and `≥ 1.0 ATR` off the fast MA — its note is "watch reversal back to 20/200," not "chase the move." Entering in the direction of an already-stretched name is the classic late-entry mistake; the further from the MA, the worse the continuation R:R.
+
+## NARROW names that already expanded
+
+The single most common miss: a **NARROW** name that already fired its expansion **before you saw it**. The setup was real pre-open, but if the first 2-minute candle has already broken and run, the entry and stop are no longer where the playbook places them. If the opening trigger has passed, the trade has passed — wait for the next clean setup.
+
+<Callout tone="danger">
+The opening playbook only works when you enter on the **first** 2-minute candle's structure. A NARROW name that already expanded, a #3 continuation, or a chase into a stretched WIDE SNAPBACK all break that structure. When in doubt, pass.
+</Callout>
