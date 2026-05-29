@@ -57,28 +57,17 @@ describe('watchlist actions', () => {
     await client.end();
   });
 
-  it('ensureDefault creates "All signals" if missing', async () => {
+  it('ensureDefaultWatchlistForUser is a deprecated no-op (does not auto-create a list)', async () => {
+    // The post-launch UX revision removed auto-creation of an "All signals"
+    // watchlist — it duplicated the dashboard's no-filter chip and showed up
+    // as a permanently empty list. The function is retained as a no-op for
+    // backward compatibility, so calling it must NOT create any rows.
     await ensureDefaultWatchlistForUser(MOCK_USER_ID);
     const rows = await db
       .select()
       .from(watchlists)
       .where(eq(watchlists.userId, MOCK_USER_ID));
-    expect(rows.length).toBeGreaterThan(0);
-    expect(rows.some((r) => r.isDefault)).toBe(true);
-    expect(rows.some((r) => r.name === 'All signals')).toBe(true);
-  });
-
-  it('ensureDefault is idempotent', async () => {
-    const before = await db
-      .select()
-      .from(watchlists)
-      .where(eq(watchlists.userId, MOCK_USER_ID));
-    await ensureDefaultWatchlistForUser(MOCK_USER_ID);
-    const after = await db
-      .select()
-      .from(watchlists)
-      .where(eq(watchlists.userId, MOCK_USER_ID));
-    expect(after.length).toBe(before.length);
+    expect(rows.length).toBe(0);
   });
 
   it('createWatchlist makes a new list', async () => {
