@@ -126,13 +126,13 @@ function BigStat({
  */
 function useCountUp(target: number, duration = 1600, decimals = 0): string {
   const reduced = useReducedMotion();
-  const [v, setV] = useState(reduced ? target : 0);
+  const [v, setV] = useState(0);
 
   useEffect(() => {
-    if (reduced) {
-      setV(target);
-      return;
-    }
+    // No animation under reduced-motion — the final value renders directly
+    // (see `displayed` below). The rAF callback defers setState out of the
+    // effect body, so we don't trip react-hooks/set-state-in-effect.
+    if (reduced) return;
     const start = performance.now();
     let raf = 0;
     const step = (now: number) => {
@@ -145,5 +145,6 @@ function useCountUp(target: number, duration = 1600, decimals = 0): string {
     return () => cancelAnimationFrame(raf);
   }, [reduced, target, duration]);
 
-  return v.toFixed(decimals);
+  const displayed = reduced ? target : v;
+  return displayed.toFixed(decimals);
 }

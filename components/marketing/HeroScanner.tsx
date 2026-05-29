@@ -58,21 +58,23 @@ export default function HeroScanner({ compact = false }: HeroScannerProps) {
     [],
   );
 
-  // Stream one line at a time, then hold + loop. Reduced-motion shows all.
-  const [visible, setVisible] = useState(reduced ? lines.length : 1);
+  // Stream one line at a time, then hold + loop. Reduced-motion shows all
+  // lines via `visibleCount` below (the streaming state is ignored).
+  const [streamed, setStreamed] = useState(1);
+  const visibleCount = reduced ? lines.length : streamed;
 
   useEffect(() => {
-    if (reduced) {
-      setVisible(lines.length);
-      return;
-    }
-    if (visible >= lines.length) {
-      const reset = setTimeout(() => setVisible(1), 3500);
+    // No streaming under reduced-motion — the render uses lines.length.
+    if (reduced) return;
+    if (streamed >= lines.length) {
+      // Hold the completed log, then loop. setState is deferred (inside the
+      // timeout) so we don't trip react-hooks/set-state-in-effect.
+      const reset = setTimeout(() => setStreamed(1), 3500);
       return () => clearTimeout(reset);
     }
-    const tick = setTimeout(() => setVisible((v) => v + 1), 380);
+    const tick = setTimeout(() => setStreamed((v) => v + 1), 380);
     return () => clearTimeout(tick);
-  }, [reduced, visible, lines.length]);
+  }, [reduced, streamed, lines.length]);
 
   return (
     <div className="relative h-full overflow-hidden rounded-sm border border-white/15 bg-[#050505]">
@@ -92,7 +94,7 @@ export default function HeroScanner({ compact = false }: HeroScannerProps) {
           compact ? 'p-3 text-[10.5px]' : 'p-4 text-[11.5px]'
         }`}
       >
-        {lines.slice(0, visible).map((l, i) => (
+        {lines.slice(0, visibleCount).map((l, i) => (
           <div key={i} className="flex items-baseline gap-2">
             <span className="shrink-0 text-white/45">{compact ? l.tShort : l.t}</span>
             <span className="shrink-0 text-[oklch(0.82_0.16_75/0.5)]">│</span>
@@ -136,7 +138,7 @@ export default function HeroScanner({ compact = false }: HeroScannerProps) {
             )}
           </div>
         ))}
-        {!reduced && visible < lines.length && (
+        {!reduced && visibleCount < lines.length && (
           <div className="mt-1 flex gap-2">
             <span className="animate-pulse text-[oklch(0.82_0.16_75)]">▌</span>
           </div>

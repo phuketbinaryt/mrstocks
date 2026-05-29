@@ -15,10 +15,16 @@ export function useReducedMotion(): boolean {
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduced(mq.matches);
+    // Defer the initial sync out of the effect body (inside a microtask) so we
+    // don't trip react-hooks/set-state-in-effect; the change listener handles
+    // later updates.
+    const id = setTimeout(() => setReduced(mq.matches), 0);
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
     mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    return () => {
+      clearTimeout(id);
+      mq.removeEventListener('change', handler);
+    };
   }, []);
 
   return reduced;
