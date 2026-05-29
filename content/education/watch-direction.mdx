@@ -1,0 +1,45 @@
+---
+title: The watch direction
+slug: watch-direction
+category: Concepts
+order: 7
+draft: false
+updated: 2026-05-30
+---
+
+# The watch direction
+
+Next to the state badge, each card shows a **watch direction** — the conditional bias the scanner has assigned. It is conditional on purpose: the scanner runs pre-open and freezes the previous session's read, so the direction is "if the open confirms, here's the side," never a standing order.
+
+## Where it comes from
+
+The watch label is derived from the **state** plus the **price location** relative to the MA cluster (`above_cluster`, `below_cluster`, `inside_cluster`, or `near_cluster`, where "near" is `0.35 × ATR`).
+
+For a NARROW name:
+
+- NARROW + above the cluster → `LONG_IF_OPEN_ABOVE_CLUSTER`
+- NARROW + below the cluster → `SHORT_IF_OPEN_BELOW_CLUSTER`
+- NARROW + anything else → `WAIT_FOR_OPEN_LOCATION`
+
+For the wide states:
+
+- WIDE SNAPBACK → `SHORT_REVERSAL_BACK_TO_20`, `LONG_REVERSAL_BACK_TO_20`, or `WIDE_SNAPBACK_WATCH`
+- TRENDING → `TREND_EVENT_NEAR_20`
+
+Anything that doesn't fit one of those → `NO_TRADE_YET`.
+
+## What the card shows
+
+The card condenses these into a short chip:
+
+- `LONG · ABOVE CLUSTER` — go long **only if** the open confirms above both MAs.
+- `SHORT · BELOW CLUSTER` — go short **only if** the open confirms below both MAs.
+- `WAIT · NO TRIGGER` — nothing actionable until the open shows its hand.
+
+<Callout tone="caution">
+The watch direction is a bias, not a trigger. `LONG · ABOVE CLUSTER` does not mean "buy now" — it means the long is live *only when* the opening event confirms it. The next tier, the opening playbook, covers exactly what that confirmation looks like.
+</Callout>
+
+## Why it's conditional
+
+A NARROW name can break either way. By tying the direction to where the open lands relative to the cluster, the scanner avoids guessing the break and instead tells you which side to take *once the market has chosen*. That keeps you out of the coin-flip and in the confirmed move.

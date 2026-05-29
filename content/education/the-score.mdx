@@ -1,0 +1,44 @@
+---
+title: How the score is built
+slug: the-score
+category: Concepts
+order: 6
+draft: false
+updated: 2026-05-30
+---
+
+# How the score is built
+
+Every card shows a **score** from 0 to 100. It is a composite ranking, built from three parts and then clamped to the 0–100 range:
+
+```
+score = clamp(0, 100, state_score + liquidity_score + location_score)
+```
+
+<Callout tone="info">
+The score is a ranking, **not a win probability**. A 96 is not a "96% chance." It means: among today's candidates, this one combines a strong state, deep liquidity, and clean location.
+</Callout>
+
+## The three parts
+
+- **State score** — the base, set by the setup state. NARROW runs 82–94 (best), WIDE SNAPBACK 60, TRENDING 50, WATCH LOOSE 45, TOO TIGHT 30, MIDDLE 20.
+- **Liquidity score** — `min(20, log10(avg_dollar_volume) × 2)`. It rewards dollar volume on a log scale and is **capped at +20**, so megacaps and merely-liquid names land close together.
+- **Location score** — `+10` when price is clearly `above_cluster` or `below_cluster`, otherwise `+5`. Clean separation from the MA cluster is worth a small bonus.
+
+## Worked examples
+
+A NARROW, liquid name trading clearly above the cluster tops out near 100:
+
+<ScoreBreakdown state={88} liquidity={18} location={10} caption="NARROW (88) + liquidity (18) + location (10) = 116, clamped to 100. The cap is why many A+ names read 100." />
+
+A WIDE SNAPBACK name, still liquid, sitting inside the cluster:
+
+<ScoreBreakdown state={60} liquidity={16} location={5} caption="WIDE SNAPBACK (60) + liquidity (16) + location (5) = 81." />
+
+A MIDDLE name with thinner volume:
+
+<ScoreBreakdown state={20} liquidity={12} location={5} caption="MIDDLE (20) + liquidity (12) + location (5) = 37 — it surfaces, but the structure is undefined." />
+
+## Using it
+
+Sort and triage by score, but never trade the number alone. A high score from a NARROW name above the cluster is a real setup; a mid-score MIDDLE name is just liquid. Always confirm the state, the Prior45 zone, and the opening trigger before acting.

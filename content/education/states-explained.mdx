@@ -1,46 +1,54 @@
 ---
-title: Setup states explained
+title: The six setup states
 slug: states-explained
-category: Basics
-order: 2
+category: Concepts
+order: 4
 draft: false
-updated: 2026-05-23
+updated: 2026-05-30
 ---
 
-# Setup states explained
+# The six setup states
 
-Each candidate on the dashboard carries one of a small number of **setup state** labels. The state captures *what kind of price action the symbol has been doing relative to its 20-day moving average and recent realized volatility.* Read the state first — it tells you what mental model to apply before you even open the chart.
+Every candidate carries exactly one **setup state**. The state captures where price sits relative to its 20- and 200-day moving averages, measured in ATR. Read the state first — it tells you which mental model to apply before you open the chart. There are six, and only six.
+
+<StateBadgeRow />
 
 ## NARROW
 
-The symbol is trading in a tight range, close to its 20MA, with sub-average realized volatility over the prior ~10 sessions. NARROW is the bread-and-butter setup: a coiling structure that often precedes a directional expansion. The thesis is "this thing is loaded; the next material move is more likely to *stick* than to be noise."
+The MA gap is in `[0.05, 0.75] ATR` **or** `[0.01%, 0.35%]`. This is the primary setup — the 20 and 200 are coiled tight, often before a directional expansion. Its `state_score` runs **82–94**: highest in the middle of the tight band, decaying toward the edges. If the MAs are still sloping (not "flat enough" — `fast_slope ≤ 0.12 ATR` and `slow_slope ≤ 0.05 ATR`), it loses 8 points and gets the note "MAs tight but still sloping."
 
-**Common play:** wait for a clean expansion candle out of the range during RTH; enter on a close above (long) or below (short) the range high/low; risk to the opposite side of the range.
-
-**Pitfall:** NARROW names that have *already* expanded before you see them. Always check whether the trigger candle has already fired.
+**Play:** wait for the opening trigger to confirm direction (see the playbook). **Pitfall:** a NARROW name that already expanded before you saw it.
 
 ## WIDE SNAPBACK
 
-The symbol is far from its 20MA (multiple ATRs away) and has recently traveled fast in one direction. The thesis is mean reversion: the move has been too steep to sustain without a pullback. WIDE SNAPBACK is *not* a "fade the trend" signal — it's "expect a counter-move within the next 1–3 sessions."
+The MA gap is `≥ 1.50 ATR` **and** price is `≥ 1.0 ATR` from the fast MA. `state_score` is **60** — the second-best state. The scanner's own note: "watch reversal back to 20/200." The thesis is a counter-move back toward the cluster, not a fresh trend trade.
 
-**Common play:** fade the extreme on a clear stalling pattern (lower-high after a thrust up, higher-low after a thrust down). Tight risk to the prior thrust extreme.
+**Play:** watch for the reversal back to 20/200. **Pitfall:** in a strong trend the stretch can persist.
 
-**Pitfall:** WIDE SNAPBACK in a strong trend can keep going. The setup has higher hit-rate when the broader index is also stretched.
+## TRENDING
 
-## WIDE EXTENSION
+The MA gap is `≥ 1.50 ATR` but price is **within** `1.0 ATR` of the fast MA. `state_score` is **50**. Note: "only events near 20/200." The cluster is wide, but price is riding the fast MA — treat it as a trend, only acting on events right at the 20/200.
 
-Similar geometry to WIDE SNAPBACK — symbol is multiple ATRs from the 20MA — but the *recent* trajectory is still in the direction of the extension (i.e. it's making fresh highs/lows rather than stalling). The thesis is trend continuation in the short term. Use this as a *do not fade* warning more than a primary entry signal.
+**Play:** only events near the 20/200. **Pitfall:** chasing far from the MA.
 
-**Common play:** if you must trade WIDE EXTENSION, wait for a tight intraday pullback toward the prior day's range; enter on the resumption.
+## WATCH LOOSE
 
-**Pitfall:** late entries here are where most account damage comes from. The bigger the gap from MA, the worse the R:R on continuation.
+Soft-tight: the gap is `≤ 1.25 ATR` **or** `≤ 0.55%` but doesn't qualify as NARROW. `state_score` is **45**. When the MAs aren't flat, the note reads "MAs close but not flat."
 
-## MEDIUM
+**Play:** keep it on watch — it may compress into NARROW. **Pitfall:** treating it as a NARROW signal early.
 
-Everything else. The symbol is between its 20MA and the WIDE-zone threshold; no special tightness, no special extension. MEDIUM names are on the dashboard because their **score** crossed the universe filter — usually a combination of dollar-volume, slope, or zone position made them notable — but the setup itself is unremarkable.
+## TOO TIGHT
 
-**Common play:** treat MEDIUM as watch-list material, not trade material. The interesting move is whether they migrate toward NARROW (compression) or toward a WIDE state (expansion) over the following sessions.
+The MA gap is `< 0.05 ATR` **and** `< 0.01%`. `state_score` is **30**. Note: "MA distance below tight minimum." The MAs are essentially on top of each other — there is no expansion structure to trade yet.
 
-## How to act on them
+**Play:** none — wait. **Pitfall:** mistaking dead-flat for coiled.
 
-The state alone is not enough. Pair it with the **Prior45 zone** (where in the recent 45-session range the symbol is currently trading) and the **score** (the scanner's composite ranking). A NARROW name in zone Lower #2 with score >75 is a much more interesting setup than a NARROW name in zone Inside with score 40. The next two articles cover both.
+## MIDDLE
+
+Everything else — not narrow enough, not wide enough. `state_score` is **20**. Note: "not narrow or wide enough." These are unremarkable; they surface because some combination of liquidity or location nudged their score.
+
+**Play:** watch-list material at best. **Pitfall:** forcing a trade on an undefined structure.
+
+## How they combine
+
+The state alone isn't the whole picture. Pair it with the **Prior45 zone** and the **score** — a NARROW name above the cluster with a high score is a very different read from a MIDDLE name. The next articles cover both.
