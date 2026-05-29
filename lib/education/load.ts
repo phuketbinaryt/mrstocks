@@ -3,7 +3,6 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { compileMDX } from 'next-mdx-remote/rsc';
-import { mdxComponents } from '@/components/education/MdxComponents';
 
 const ROOT = path.join(process.cwd(), 'content/education');
 
@@ -81,6 +80,12 @@ export async function loadArticle(slug: string): Promise<LoadedArticle | null> {
   }
   const meta = parseFrontmatter(raw, `${safeSlug}.mdx`);
   const { content: source } = matter(raw);
+  // Import the component registry lazily so the static module graph stays free
+  // of the client-component tree (StockCard et al). This keeps unit tests that
+  // exercise listArticles/loadArticle's parsing from pulling in next-auth.
+  const { mdxComponents } = await import(
+    '@/components/education/MdxComponents'
+  );
   const { content } = await compileMDX({
     source,
     components: mdxComponents,

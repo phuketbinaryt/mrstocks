@@ -2,6 +2,13 @@ import { defineConfig } from 'vitest/config';
 import path from 'node:path';
 
 export default defineConfig({
+  // tsconfig sets jsx: "preserve" for Next; Vitest 4 uses the oxc transformer,
+  // so override the JSX runtime here. Without this, oxc preserves JSX in any
+  // .tsx module imported by the code under test (e.g. lib/education/load.ts now
+  // imports the MDX component registry) and import-analysis fails to parse it.
+  oxc: {
+    jsx: { runtime: 'automatic' },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './'),

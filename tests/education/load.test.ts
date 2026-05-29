@@ -1,14 +1,22 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { listArticles, loadArticle } from '@/lib/education/load';
 
+// loadArticle lazily imports the MDX component registry, which transitively
+// pulls in the client component tree (StockCard -> server actions -> auth).
+// That chain can't resolve in the node test env, and isn't what we're testing
+// here — stub the registry so compileMDX gets an (empty) components map.
+vi.mock('@/components/education/MdxComponents', () => ({
+  mdxComponents: {},
+}));
+
 describe('education/load', () => {
-  it('lists all 4 launch articles with required frontmatter', async () => {
+  it('lists all launch articles with required frontmatter', async () => {
     const articles = await listArticles();
-    expect(articles.length).toBeGreaterThanOrEqual(4);
+    expect(articles.length).toBeGreaterThanOrEqual(11);
     const slugs = articles.map((a) => a.slug).sort();
     expect(slugs).toEqual(
       expect.arrayContaining([
-        'introduction',
+        'what-is-mrstocks',
         'states-explained',
         'prior45-zones',
         'reading-a-card',
@@ -33,9 +41,9 @@ describe('education/load', () => {
   });
 
   it('loads + compiles a real article', async () => {
-    const a = await loadArticle('introduction');
+    const a = await loadArticle('what-is-mrstocks');
     expect(a).not.toBeNull();
-    expect(a!.meta.slug).toBe('introduction');
+    expect(a!.meta.slug).toBe('what-is-mrstocks');
     expect(a!.meta.title).toMatch(/MR\/STOCKS/);
     expect(a!.content).toBeDefined();
   });
