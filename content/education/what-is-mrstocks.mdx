@@ -1,0 +1,45 @@
+---
+title: What MR/STOCKS is
+slug: what-is-mrstocks
+category: Basics
+order: 1
+draft: false
+updated: 2026-05-30
+---
+
+# What MR/STOCKS is
+
+MR/STOCKS is a **pre-open stock scanner**. It runs once each morning, reads the previous regular-session picture for a large universe of US equities, and hands you a ranked shortlist of names whose 20- and 200-day moving averages are coiled, stretched, or trending in a tradeable way.
+
+## The 09:15 daily flow
+
+Around **09:15 NY**, before the regular session opens, the scanner does its work:
+
+1. It **freezes the previous RTH session's state** — it does not peek at today's open. Everything you see is the picture *going into* the day.
+2. It classifies every symbol into one of **six setup states** (NARROW, WIDE SNAPBACK, TRENDING, WATCH LOOSE, TOO TIGHT, MIDDLE).
+3. It scores and ranks them — roughly **500 candidates** land on the dashboard, sorted so the strongest setups rise to the top.
+
+By the time you open the dashboard, the list is already there. It does not change intraday — it is a pre-market read, then you take it to your charts.
+
+<Callout tone="info">
+The scanner is **advisory**. It surfaces the pre-open picture and a conditional bias. The actual entry always needs the opening event to confirm — see the opening playbook.
+</Callout>
+
+## What a member does with it
+
+- **Scan the dashboard** before the open and filter by state, Prior45 zone, or one of your watchlists.
+- **Find the A+ setups** — typically NARROW names with a clean location and a high score.
+- **Wait for the opening trigger** — the first regular-session 2-minute candle decides direction (covered in the Strategy tier).
+- **Save names to watchlists** and **set alerts** so tomorrow's scan pings you when a matching setup appears.
+
+## What it does not do
+
+- **Not real-time.** It does not stream intraday quotes.
+- **Not a buy signal.** A candidate is a *setup* with a *conditional* bias, not an order.
+- **Not advice.** Trade your own book; read the terms.
+
+## Where to go next
+
+- [The six setup states](/education/states-explained) — what each badge means.
+- [The Prior45 zone system](/education/prior45-zones) — where price sits in the band.
+- [How to read a candidate card](/education/reading-a-card) — every field on the tile.
