@@ -2,6 +2,7 @@ import Nav from '@/components/marketing/Nav';
 import TickerTape from '@/components/marketing/TickerTape';
 import Hero from '@/components/marketing/Hero';
 import BigStats from '@/components/marketing/BigStats';
+import MethodViz from '@/components/marketing/MethodViz';
 import HowItWorks from '@/components/marketing/HowItWorks';
 import Features from '@/components/marketing/Features';
 import Pricing from '@/components/marketing/Pricing';
@@ -18,6 +19,7 @@ export default async function HomePage() {
       <TickerTape />
       <Hero />
       <BigStats />
+      <MethodViz />
       <HowItWorks />
       <Features />
       <Pricing checkoutUrl={env.WHOP_CHECKOUT_URL} />
