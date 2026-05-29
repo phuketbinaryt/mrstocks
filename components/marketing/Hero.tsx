@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
+import HeroScanner from '@/components/marketing/HeroScanner';
 
 export default function Hero() {
   return (
@@ -72,73 +73,11 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — static scanner-log preview (animated version arrives in a later phase) */}
-        <ScannerLogStatic />
-      </div>
-    </section>
-  );
-}
-
-/**
- * Static counterpart of the design's animated HeroScanner. Renders a fixed
- * "completed" log inside a bordered black card with a steady amber cursor.
- * Phase-3 (or whenever the dashboard data exists) will replace this with the
- * streaming version.
- */
-function ScannerLogStatic() {
-  const lines = [
-    { ts: '09:14:58', body: 'SYS INIT scanner v2.4', tone: 'white/65' },
-    { ts: '09:14:59', body: 'LOAD UNIVERSE us-lrg · 503 symbols', tone: 'white/65' },
-    { ts: '09:15:00', body: 'EVAL NVDA → NARROW · SCORE 100 [PASS]', tone: 'amber' },
-    { ts: '09:15:01', body: 'EVAL AAPL → NARROW · SCORE 96  [PASS]', tone: 'amber' },
-    { ts: '09:15:02', body: 'EVAL MSFT → TRENDING · SCORE 94 [PASS]', tone: 'green' },
-    { ts: '09:15:03', body: 'EVAL GOOGL → NARROW · SCORE 92 [PASS]', tone: 'amber' },
-    { ts: '09:15:04', body: 'EVAL META → WIDE SNAPBACK · SCORE 88 [PASS]', tone: 'cyan' },
-    { ts: '09:15:04', body: '... 487/503 evaluated', tone: 'white/45' },
-    { ts: '09:15:05', body: 'RULES MATCH · 12 candidates', tone: 'green' },
-    { ts: '09:15:05', body: 'PUSH · email + web push dispatched', tone: 'amber' },
-    { ts: '09:15:05', body: 'READY · dashboard live', tone: 'green' },
-  ];
-
-  const colorFor = (tone: string): string => {
-    switch (tone) {
-      case 'amber':
-        return 'oklch(0.82 0.16 75)';
-      case 'cyan':
-        return 'oklch(0.78 0.12 200)';
-      case 'green':
-        return 'oklch(0.78 0.16 150)';
-      case 'white/45':
-        return 'rgba(255,255,255,0.45)';
-      case 'white/65':
-      default:
-        return 'rgba(255,255,255,0.65)';
-    }
-  };
-
-  return (
-    <div className="h-[340px] md:h-[440px] border border-white/15 rounded-sm bg-[#050505] overflow-hidden">
-      <div className="flex items-center gap-2 px-3 h-7 border-b border-white/10 bg-[#080808]">
-        <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.78_0.16_150)] shadow-[0_0_6px_oklch(0.78_0.16_150)]" />
-        <span className="text-[10.5px] uppercase tracking-[0.12em] text-[oklch(0.78_0.16_150)]">
-          LIVE LOG · 20-MAY
-        </span>
-        <span className="ml-auto text-[10px] uppercase tracking-[0.12em] text-white/45">
-          SCANNER V2.4
-        </span>
-      </div>
-      <div className="px-4 py-4 text-[11.5px] md:text-[12.5px] leading-[1.7] font-mono">
-        {lines.map((l, i) => (
-          <div key={i} className="flex items-start gap-3">
-            <span className="text-white/35 tabular-nums">{l.ts}</span>
-            <span className="text-[oklch(0.82_0.16_75/0.4)]">│</span>
-            <span style={{ color: colorFor(l.tone) }}>{l.body}</span>
-          </div>
-        ))}
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-[oklch(0.82_0.16_75)] animate-pulse">▌</span>
+        {/* RIGHT — animated streaming scanner log (reduced-motion: full log) */}
+        <div className="h-[340px] md:h-[440px]">
+          <HeroScanner />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
