@@ -1,0 +1,49 @@
+---
+title: Glossary
+slug: glossary
+category: Reference
+order: 11
+draft: false
+updated: 2026-05-30
+---
+
+# Glossary
+
+Quick definitions for the terms used across the dashboard and these articles.
+
+## Moving averages
+
+- **SMA20** — the 20-period simple moving average (the "fast" MA).
+- **SMA200** — the 200-period simple moving average (the "slow" MA).
+- **MA cluster** — the band spanned by the fast and slow MAs together. "Above/below the cluster" means clearly outside both.
+- **MA distance (ATR)** — the gap between the two MAs measured in ATR units. Drives the state.
+- **MA distance (%)** — the same gap as a percent. The state qualifies on whichever of ATR or % crosses the threshold.
+- **Slope** — the rate of change of an MA, in ATR. "Flat enough" for NARROW means `fast_slope ≤ 0.12 ATR` and `slow_slope ≤ 0.05 ATR`.
+
+## Volatility and price
+
+- **ATR** — Average True Range, a volatility unit. Distances in ATR are comparable across symbols of different price levels.
+- **Gap** — `(current close − previous RTH close) / previous RTH close × 100` for `gap_pct`; the same move in ATR units for `gap_atr`.
+- **Price location** — where the close sits vs the cluster: `above_cluster`, `below_cluster`, `inside_cluster`, or `near_cluster` (within `0.35 × ATR`).
+
+## The states
+
+- **NARROW** — MA gap in `[0.05, 0.75] ATR` or `[0.01%, 0.35%]`. `state_score` 82–94. The primary coil.
+- **WIDE SNAPBACK** — gap `≥ 1.50 ATR` and price `≥ 1.0 ATR` off the fast MA. `state_score` 60. Watch reversal to 20/200.
+- **TRENDING** — gap `≥ 1.50 ATR` but price within `1.0 ATR` of the fast MA. `state_score` 50. Events near 20/200 only.
+- **WATCH LOOSE** — soft-tight: gap `≤ 1.25 ATR` or `≤ 0.55%` but not NARROW. `state_score` 45.
+- **TOO TIGHT** — gap `< 0.05 ATR` and `< 0.01%`. `state_score` 30.
+- **MIDDLE** — everything else. `state_score` 20.
+
+## Prior45 and zones
+
+- **Prior45** — the reference band from the previous RTH session's final 45 minutes plus the 20/200 cluster.
+- **Zone height** — the larger of the cluster height or `0.25 ATR`.
+- **Zone bucket** — `#1` within one zone-height of the edge, `#2` 1–2×, `#3` 2×+ (stretched).
+
+## Score and watch labels
+
+- **Score** — `clamp(0, 100, state_score + liquidity_score + location_score)`. A composite ranking, not a probability.
+- **Liquidity score** — `min(20, log10(avg_dollar_volume) × 2)`.
+- **Location score** — `+10` for above/below cluster, `+5` otherwise.
+- **Watch labels** — `LONG_IF_OPEN_ABOVE_CLUSTER`, `SHORT_IF_OPEN_BELOW_CLUSTER`, `WAIT_FOR_OPEN_LOCATION`, the WIDE SNAPBACK reversal labels, `TREND_EVENT_NEAR_20`, and `NO_TRADE_YET`.
