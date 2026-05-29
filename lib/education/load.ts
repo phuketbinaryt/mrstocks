@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import { mdxComponents } from '@/components/education/MdxComponents';
 
 const ROOT = path.join(process.cwd(), 'content/education');
 
@@ -82,6 +83,7 @@ export async function loadArticle(slug: string): Promise<LoadedArticle | null> {
   const { content: source } = matter(raw);
   const { content } = await compileMDX({
     source,
+    components: mdxComponents,
     options: { parseFrontmatter: false },
   });
   return { meta, content };
