@@ -20,6 +20,79 @@
   }
 }
 
+/* ── Marketing landing animations ─────────────────────────────────────────
+   Transform/opacity only (compositor-friendly). All animations are CSS-gated
+   behind prefers-reduced-motion AND additionally guarded in JS via the
+   useReducedMotion hook so the final state always renders for reduced-motion
+   users. */
+@keyframes ms-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+@keyframes ms-fast {
+  0%,
+  15% {
+    transform: translateY(0);
+  }
+  60%,
+  100% {
+    transform: translateY(38px);
+  }
+}
+@keyframes ms-slow {
+  0%,
+  15% {
+    transform: translateY(0);
+  }
+  60%,
+  100% {
+    transform: translateY(-26px);
+  }
+}
+@keyframes ms-cluster {
+  0%,
+  30% {
+    opacity: 0;
+  }
+  60%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes ms-pulse {
+  0%,
+  100% {
+    r: 5;
+    opacity: 1;
+  }
+  50% {
+    r: 8;
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ms-marquee {
+    animation: ms-marquee 60s linear infinite;
+  }
+  .ms-sma-fast {
+    animation: ms-fast 6s ease-in-out infinite;
+  }
+  .ms-sma-slow {
+    animation: ms-slow 6s ease-in-out infinite;
+  }
+  .ms-sma-cluster {
+    animation: ms-cluster 6s ease-in-out infinite;
+  }
+  .ms-price-pulse {
+    animation: ms-pulse 1.4s ease-in-out infinite;
+  }
+}
+
 /* Prose styles for /education MDX articles. Mirrors the MR/STOCKS visual
    language — black background, uppercase H tags, amber accents. */
 .prose-mrstocks {
